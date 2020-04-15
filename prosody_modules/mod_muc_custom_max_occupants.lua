@@ -115,6 +115,10 @@ local function check_for_max_occupants(event)
 		-- TODO: Are Prosody hooks atomic, or is this a race condition?
 		-- For each person in the room that's not on the whitelist, subtract one
 		-- from the count.
+        if MAX_OCCUPANTS < 0 then
+            return
+        end
+
 		for _, occupant in room:each_occupant() do
 			user, domain, res = split_jid(occupant.bare_jid);
             slots = slots - 1
