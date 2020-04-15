@@ -88,6 +88,7 @@ local function get_max_count(room_id)
 end
 
 local function check_for_max_occupants(event)
+    log('info', 'muc-occupant-pre-join adding module');
   local room, origin, stanza = event.room, event.origin, event.stanza;
   log("info","check_for_max_occupants: room: %s, origin: %s, stanza: ", room, origin, stanza);
 
@@ -134,4 +135,4 @@ local function check_for_max_occupants(event)
 	end
 end
 
-module:hook("muc-occupant-pre-join", check_for_max_occupants, 800);
+module:hook("muc-occupant-pre-join", check_for_max_occupants, 8808);
