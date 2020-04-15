@@ -90,8 +90,9 @@ end
 local function check_for_max_occupants(event)
     log('info', 'muc-occupant-pre-join adding module');
   local room, origin, stanza = event.room, event.origin, event.stanza;
-  log("info","check_for_max_occupants: room: %s, origin: %s, stanza: ", room, origin, stanza);
+  module:log("warn","check_for_max_occupants: room: %s, origin: %s, stanza: ", room, origin, stanza);
     local MAX_OCCUPANTS=get_max_count(room);
+    module:log("warn","MAX_OCCUPANTS: %s", MAX_OCCUPANTS);
 
   local actor = stanza.attr.from;
   local user, domain, res = split_jid(stanza.attr.from);
