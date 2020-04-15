@@ -91,7 +91,9 @@ end
 local function check_for_max_occupants(event)
     log('info', 'muc-occupant-pre-join adding module');
   local room, origin, stanza = event.room, event.origin, event.stanza;
-  module:log("warn","check_for_max_occupants: room: %s, origin: %s, stanza: ", room, origin, stanza);
+    local event_params = parse(event.request.url.query);
+	local room_name = params["room"];
+    module:log("info", "param room name %s", room_name);
     local MAX_OCCUPANTS=get_max_count(room);
     module:log("warn","MAX_OCCUPANTS: %s", MAX_OCCUPANTS);
 
