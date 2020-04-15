@@ -76,7 +76,8 @@ local function getsql(sql, ...)
 end
 
 local function get_max_count(room_id)
-    local room_stmt, room_err = getsql("SELECT id, room_id, max_number_of_user, from room_room where room_id=?", room_id);
+    module:log("warn","check_for_max_occupants: room: %s", room);
+    local room_stmt, room_err = getsql("SELECT id, room_id, max_number_of_user from room_room where room_id=?", room_id);
     if room_stmt then
         for row in room_stmt:rows(true) do
             if( row.room_id == room_id )then
