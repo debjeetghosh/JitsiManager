@@ -12,7 +12,7 @@ local connection;
 local params = module:get_option("auth_sql", module:get_option("sql"));
 
 local whitelist = module:get_option_set("muc_access_whitelist");
-
+local MAX_OCCUPANTS=2;
 local function count_keys(t)
   return it.count(it.keys(t));
 end
@@ -89,7 +89,7 @@ end
 
 local function check_for_max_occupants(event)
   local room, origin, stanza = event.room, event.origin, event.stanza;
-    log("info","check_for_max_occupants: room: %s, origin: %s, stanza: ", room, origin, stanza)
+  log("info","check_for_max_occupants: room: %s, origin: %s, stanza: ", room, origin, stanza);
 
   local actor = stanza.attr.from;
   local user, domain, res = split_jid(stanza.attr.from);
@@ -134,4 +134,4 @@ local function check_for_max_occupants(event)
 	end
 end
 
-module:hook("muc-occupant-pre-join", check_for_max_occupants, 10);
+module:hook("muc-occupant-pre-join", check_for_max_occupants, 800);
