@@ -17,7 +17,15 @@ local function count_keys(t)
   return it.count(it.keys(t));
 end
 
-
+local function test_connection()
+        if not connection then return nil; end
+        if connection:ping() then
+                return true;
+        else
+                module:log("debug", "Database connection closed");
+                connection = nil;
+        end
+end
 
 local function connect()
         if not test_connection() then
