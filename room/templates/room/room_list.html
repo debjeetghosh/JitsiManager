@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block contents %}
+    <div>
+    <h3 class="pull-left">Meeting List</h3>
+    {% if user.profile.user_type == 'creator' %}
+    <div class="pull-right">
+        <a href="{% url 'room:create_room' %}" class="btn btn-primary">Create a new meeting</a>
+    </div>
+    {% endif %}
+    <div class="clearfix"></div>
+    </div>
+    <table class="table">
+        <tr>
+            <th>Meeting Name</th>
+            <th>Maximum number of users</th>
+            <th>Maximum meeting time length (in Minutes)</th>
+            <th>Created by</th>
+            <th></th>
+        </tr>
+        {% for room in object_list %}
+            <tr>
+                <td>{{ room.name }}</td>
+                <td>
+                    {% if room.max_number_of_user < 0 %}
+                    Unlimited
+                    {% else %}
+                    {{ room.max_number_of_user }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if room.max_length < 0 %}
+                    Unlimited
+                    {% else %}
+                    {{ room.max_length }}
+                    {% endif %}
+                </td>
+                <td>{{ room.created_by }}</td>
+                <td>
+                    {% if room.created_by == user %}
+                        <a href="{% url 'room:room_update' room.id %}" class="btn btn-primary">Update Meeting</a>
+                    {% endif %}
+                    <a href="{% url 'room:join_room' room.id %}" class="btn btn-primary">Join Meeting</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block contents %}
+    <h4>Create a new room</h4>
+    <hr/>
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            {{ form.errors }}
+        </div>
+    {% endif %}
+    {% if user.profile.user_type == 'creator' %}
+    <form action="." method="post">
+        {% csrf_token %}
+        {% for field in form.visible_fields %}
+            <div class="form-group">
+                {% if field.field.widget.is_hidden is not True %}
+                    {% if field.field.required %}
+                        <label>{{ field.label }}<span class="required"> * </span></label>
+                    {% else %}
+                        <label>{{ field.label }}</label>
+                    {% endif %}
+                {% endif %}
+                {{ field }}
+                {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-large btn-primary">Create</button>
+    </form>
+    {% else %}
+        <h3 class="text-center">You are not room creator. You have to register as creator.</h3>
+    {% endif %}
+{% endblock %}

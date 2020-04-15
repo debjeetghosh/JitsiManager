@@ -1,0 +1,21 @@
+<!-- Sidebar -->
+<div id="sidebar-wrapper" style="overflow: auto">
+    <ul class="sidebar-nav brand-clear">
+        <li><a href="/" aria-hidden="true"></i> <i class="fa fa-home" aria-hidden="true"></i> Home </a></li>
+
+
+        <br>
+        <li class="sidebar-title" style="margin-top: 0;">Meeting Management</li>
+        <li><a href="{% url 'room:room_list' %}"> <i class="fa fa-angle-double-right" aria-hidden="true"></i>Meetings</a></li>
+
+        <br>
+        {% if user.is_staff %}
+        <li class="sidebar-title" style="margin-top: 0;">User Management</li>
+        <li><a href="{% url 'restrictions:restriction_list' %}"> <i class="fa fa-angle-double-right" aria-hidden="true"></i>Mange users</a></li>
+        {% endif %}
+
+
+
+    </ul>
+</div>
+<!-- /#sidebar-wrapper -->

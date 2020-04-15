@@ -1,0 +1,53 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}Chat Room{% endblock %}
+    </title>
+    {% include "includes/css.html" %}
+</head>
+<body>
+<div id="wrapper" class="sidebar">
+    {% include "includes/navbar.html" %}
+
+    <!-- Sidebar -->
+    {% include "includes/sidebar.html" %}
+    <!-- /#sidebar-wrapper -->
+
+
+    <!-- Page Content -->
+    <div id="page-wrapper">
+        {% if messages %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <strong>Limited permission!</strong>
+                <hr>
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        {% block contents %}{% endblock %}
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+{% include 'includes/js.html' %}
+{% block page_script %}{% endblock %}
+<script>
+    var nav_link = $('.nav').find('li').find("a[data-link='{{ request.path }}']");
+    nav_link.parent('li').addClass('active');
+
+    var tab_link = $('.tab-link').find('li').find("a[href='{{ request.path }}']");
+    tab_link.parent('li').addClass('active');
+    //nav_link.parent('li').parent('ul').parent('li').addClass('active');
+</script>
+</body>
+</html>

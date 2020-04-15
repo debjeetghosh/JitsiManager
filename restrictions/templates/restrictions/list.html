@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block contents %}
+    <div>
+    <h3 class="pull-left">Manage User</h3>
+
+    <div class="clearfix"></div>
+    </div>
+    <table class="table">
+        <tr>
+            <th>User Name</th>
+            <th>Maximum meetings count</th>
+            <th>Maximum time length of meeting</th>
+            <th>Maximum number of guest</th>
+            <th></th>
+        </tr>
+        {% for restriction in object_list %}
+            <tr>
+                <td>{{ restriction.user }}</td>
+                <td>
+                    {% if restriction.max_room_count < 0 %}
+                    Unlimited
+                    {% else %}
+                    {{ restriction.max_room_count }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if restriction.max_time_length < 0 %}
+                    Unlimited
+                    {% else %}
+                    {{ restriction.max_time_length }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if restriction.max_member_count < 0 %}
+                    Unlimited
+                    {% else %}
+                    {{ restriction.max_member_count }}
+                    {% endif %}
+                </td>
+
+                <td>
+                    <a href="{% url 'restrictions:restriction_update' restriction.id %}" class="btn btn-primary">Update room</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
