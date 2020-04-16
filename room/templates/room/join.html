@@ -18,7 +18,7 @@
 
             </div>
 
-        <script src='{% static "js/external_api.min.js" %}'></script>
+        <script src='https://meet.jit.si/external_api.js'></script>
         <script type="text/javascript">
             const domain = '{{ domain }}';
             const options = {
@@ -29,7 +29,6 @@
                 jwt: '{{ token }}'
 
             };
-            var holderDiv = document.getElementById("holder");
             const api = new JitsiMeetExternalAPI(domain, options);
             api.executeCommand('displayName', '{{ user.profile.name }}');
 
