@@ -88,13 +88,29 @@ local function get_max_count(room_id)
     return -1
 end
 
+local function is_room_available(room_id)
+    local room_stmt, room_err = getsql("SELECT id, room_id, max_number_of_user from room_room where room_id=?", room_id);
+    if room_stmt then
+        for row in room_stmt:rows(true) do
+            if( row.room_id == room_id )then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 local function check_for_max_occupants(event)
     log('info', 'muc-occupant-pre-join adding module');
   local room, origin, stanza = event.room, event.origin, event.stanza;
 
 	local room_name, room_domain, room_resource = split_jid(room.jid);
     module:log("info", "param room name: %s,  domain: %s, resource: %s", room_name, room_domain, room_resource);
-    local MAX_OCCUPANTS=get_max_count(room);
+    if (is_room_available(room_name) ~= true) then
+        origin.send(st.error_reply(stanza, "cancel", "service-unavailable"));
+        return true;
+    end
+    local MAX_OCCUPANTS=get_max_count(room_name);
     module:log("warn","MAX_OCCUPANTS: %s", MAX_OCCUPANTS);
 
   local actor = stanza.attr.from;

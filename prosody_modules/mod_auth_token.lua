@@ -114,44 +114,12 @@ local function verify_user_room(user_id, room)
                     log("info", "room=public")
                     return row.name;
                 end
-                if(row.created_by_id == db_user_id)then
-                    return row.name;
-                end
-                local room_white_list_stmt, room_white_list_err = getsql("SELECT id, room_id, user_id from room_room_white_list where room_id=? and user_id=?", db_room, db_user_id);
-                if room_room_white_list then
-                    for white_list in room_white_list_stmt:rows(true) do
-                        return row.name;
-                    end
-                end
                 break;
             end
         end
     end
-	-- local stmt, err = getsql("SELECT `room` FROM `jitsy_acl` WHERE `user_id`=? ", user_id);
-	-- if stmt then
- --            for row in stmt:rows(true) do
- --                    return row.room;
- --            end
- --    end
 	return nil;
-
 end
-
-local function is_creator(user_id, room_id)
-    local stmt, err = getsql("SELECT id, created_by_id, name from room_room where created_by_id=? and id=?", user_id, room_id)
-    if stmt then
-        for row in stmt:rows(true) do
-            if(row.id == tonumber(room_id)) then
-                log("info", "creator: user: %s, room: %s", user_id, room_id);
-                return "true";
-            end
-        end
-
-    end
-    return nil;
-end
-
-
 
 function provider.test_password(username, password)
 	return nil, "Password based auth not supported";

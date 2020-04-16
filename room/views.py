@@ -113,14 +113,14 @@ class RoomJoinView(View):
                     },
                     "group": "a123-123-456-789"
                 },
-                "aud": JITSI_AUD,
+                "aud": "",
                 "iss": JITSI_ISSUER,
-                "sub": "meet.jitsi",
-                "room": room_obj.name,
+                "sub": "example_app_id",
+                "room": room_obj.room_id,
                 "exp": 1685141372
             }
-            domain = JITSI_URL
-            token = jwt.encode(payload, JITSI_PRIVATE_KEY, algorithm='HS256', headers=headers).decode('utf-8')
+            domain = 'talk.gomeeting.org'
+            token = jwt.encode(payload, "example_app_secret", algorithm='HS256', headers=headers).decode('utf-8')
             return render(request, self.template, locals())
 
 
