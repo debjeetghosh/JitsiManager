@@ -113,7 +113,7 @@ class RoomJoinView(View):
                     },
                     "group": "a123-123-456-789"
                 },
-                "aud": "",
+                "aud": JITSI_AUD,
                 "iss": JITSI_ISSUER,
                 "sub": "example_app_id",
                 "room": room_obj.room_id,
