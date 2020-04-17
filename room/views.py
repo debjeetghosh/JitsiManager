@@ -89,8 +89,7 @@ class RoomJoinView(View):
             has_access = True
         elif room_obj.created_by == request.user:
             has_access = True
-        elif room_obj.white_list.filter(pk=request.user.id).first():
-            has_access = True
+
         if is_active and has_access:
             headers = {
             }
