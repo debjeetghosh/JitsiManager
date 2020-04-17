@@ -15,7 +15,7 @@ class Room(models.Model):
     created_by = models.ForeignKey(JitsiUser, on_delete=models.DO_NOTHING, related_name='created_rooms')
     is_active = models.BooleanField(default=True)
     max_number_of_user = models.IntegerField(_("Maximum number of users"), default=-1)
-    start_time = models.IntegerField(default=0)
-    end_time = models.IntegerField(default=0)
+    start_time = models.BigIntegerField(default=0)
+    end_time = models.BigIntegerField(default=0)
     max_length = models.IntegerField(_("Maximum meeting time length (in Minutes)"), default=-1)
 
