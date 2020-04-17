@@ -32,7 +32,7 @@
             const api = new JitsiMeetExternalAPI(domain, options);
             api.executeCommand('displayName', '{{ user.profile.name }}');
 
-            api.executeCommand('subject', {{ room_obj.name }});
+            api.executeCommand('subject', '{{ room_obj.name }}');
 
             api.addEventListener('videoConferenceLeft', function () {
                 window.location = "{% url 'room:room_list' %}";
