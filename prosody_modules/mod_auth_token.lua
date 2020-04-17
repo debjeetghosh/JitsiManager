@@ -42,7 +42,7 @@ function init_session(event)
     end
 end
 
-module:hook_global("bosh-session", init_session);
+module:hook("bosh-session", init_session);
 module:hook("websocket-session", init_session);
 
 local function test_connection()
