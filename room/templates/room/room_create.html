@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 {% block contents %}
-    <h4>Create a new room</h4>
+    <h4>
+        {% if update %}
+        Update meeting
+        {% else %}
+        Create a new meeting
+        {% endif %}
+    </h4>
     <hr/>
     {% if form.errors %}
         <div class="alert alert-danger">
@@ -10,6 +16,7 @@
     {% if user.profile.user_type == 'creator' %}
     <form action="." method="post">
         {% csrf_token %}
+        {{ form.start_time }}
         {% for field in form.visible_fields %}
             <div class="form-group">
                 {% if field.field.widget.is_hidden is not True %}
@@ -26,9 +33,48 @@
 
             </div>
         {% endfor %}
-        <button type="submit" class="btn btn-large btn-primary">Create</button>
+        <div class="form-group">
+            <label>Start Time<span class="required"> * </span></label>
+            <div class='input-group date' id='datetimepicker1'>
+                <input type='text' class="form-control" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-large btn-primary">
+            {% if update %}
+            Update
+            {% else %}
+            Create
+            {% endif %}
+        </button>
     </form>
     {% else %}
         <h3 class="text-center">You are not room creator. You have to register as creator.</h3>
     {% endif %}
+{% endblock %}
+
+{% block page_script %}
+    <script type="text/javascript">
+        $(function () {
+            var start_time = moment();
+            var form_start_time = parseInt($("#id_start_time").val());
+            if (form_start_time != 0 ) {
+                start_time = moment(form_start_time);
+            }
+            else {
+                $("#id_start_time").val(start_time.valueOf());
+            }
+            $('#datetimepicker1').datetimepicker({
+                format: 'DD/MM/YYYY hh:mm a',
+                defaultDate: start_time
+            });
+            $('#datetimepicker1').on('dp.change', function(e){
+                console.log(e.date);
+                $("#id_start_time").val(e.date.valueOf());
+            });
+        });
+
+    </script>
 {% endblock %}

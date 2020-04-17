@@ -12,6 +12,7 @@
     <table class="table">
         <tr>
             <th>Meeting Name</th>
+            <th>Start time</th>
             <th>Maximum number of users</th>
             <th>Maximum meeting time length (in Minutes)</th>
             <th>Created by</th>
@@ -20,6 +21,9 @@
         {% for room in object_list %}
             <tr>
                 <td>{{ room.name }}</td>
+                <td>
+                    <span class="start_time_span">{{ room.start_time }}</span>
+                </td>
                 <td>
                     {% if room.max_number_of_user < 0 %}
                     Unlimited
@@ -44,4 +48,20 @@
             </tr>
         {% endfor %}
     </table>
+{% endblock %}
+{% block page_script %}
+    <script type="text/javascript">
+    $(function(){
+        $(".start_time_span").each(function () {
+            var time = parseInt($(this).text());
+            if(time == 0){
+                $(this).text("-");
+            }
+            else{
+                $(this).text(moment(time).format('DD/MM/YYYY hh:mm a'));
+            }
+
+        });
+    });
+    </script>
 {% endblock %}

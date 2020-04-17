@@ -28,7 +28,7 @@ class RoomForm(forms.ModelForm):
 
     class Meta:
         model = Room
-        fields = ['name', 'max_number_of_user', 'max_length']
+        fields = ['name', 'max_number_of_user', 'max_length', 'start_time']
         help_texts = {
             "max_number_of_user": "Please put -1 if you want unlimited",
             "max_length": "Please put -1 if you want unlimited",
@@ -38,4 +38,5 @@ class RoomForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'max_number_of_user': forms.TextInput(attrs={'class': 'form-control'}),
             'max_length': forms.TextInput(attrs={'class': 'form-control'}),
+            'start_time': forms.HiddenInput()
         }

@@ -13,6 +13,9 @@
 
             <div class="row">
                 <div class="col-md-12">
+                    {% if room_obj.start_time and room_obj.max_length > 0 %}
+                        <h1>Time remaining: <span id="remaining_time_span"></span></h1>
+                    {% endif %}
                     <div id="meet"></div>
                 </div>
 
@@ -40,4 +43,24 @@
 
         </script>
         {% endif %}
+{% endblock %}
+{% block page_scripts %}
+    <script type="text/javascript">
+        $(function () {
+            {% if room_obj.start_time and room_obj.max_length > 0 %}
+                var start_time = {{ room_obj.start_time }};
+                var end_time = {{ room_obj.start_time }} + parseInt({{ room_obj.max_length }})*60*1000;
+                setInterval(function(){
+                    if(end_time-moment().valueOf()>0) {
+                        var remaining_time = moment.duration(end_time - moment().valueOf(), 'milliseconds');
+                        $("#remaining_time_span").text(remaining_time.minutes() + " minutes" + remaining_time.seconds() + " seconds");
+                    }
+                    else{
+                        $("#remaining_time_span").text("Finished");
+                        window.location = "{% url 'room:room_list' %}";
+                    }
+                }, 1000);
+            {% endif %}
+        });
+    </script>
 {% endblock %}

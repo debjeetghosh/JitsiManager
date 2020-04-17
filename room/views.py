@@ -1,4 +1,5 @@
 import uuid
+from time import time
 from uuid import UUID
 
 import jwt
@@ -39,6 +40,8 @@ class RoomCreateView(View):
             room = form.save(commit=False)
             room.room_id = uuid.uuid4()
             room.created_by = request.user
+            if room.max_length > 0:
+                room.end_time = room.start_time + room.max_length
             room.save()
             form.save_m2m()
             return redirect(reverse('room:room_list'))
@@ -52,14 +55,18 @@ class RoomUpdateView(View):
 
     def get(self, request, *args, **kwargs):
         room_obj = get_object_or_404(Room, pk=kwargs.get('pk'), created_by=request.user)
-        form = self.form(instance=room_obj)
+        form = self.form(instance=room_obj, user=self.request.user)
+        update=True
         return render(request, self.template_name, locals())
 
     def post(self, request, *args, **kwargs):
         room_obj = get_object_or_404(Room, pk=kwargs.get('pk'), created_by=request.user)
-        form = self.form(request.POST, instance=room_obj)
+        form = self.form(data=request.POST, instance=room_obj, user=self.request.user)
+        update=True
         if form.is_valid():
             room = form.save(commit=False)
+            if room.max_length > 0:
+                room.end_time = room.start_time + room.max_length
             room.save()
 
             form.save_m2m()
@@ -72,7 +79,11 @@ class RoomListView(ListView):
     model = Room
 
     def get_queryset(self):
-        return Room.objects.filter(Q(room_type=Room.PUBLIC) | Q(created_by=self.request.user)).distinct()
+        now_time = int(time())*1000
+        return Room.objects.filter(
+            Q(max_length__gt=0, end_time__gte=now_time)|
+            Q(room_type=Room.PUBLIC) | Q(created_by=self.request.user)
+        ).distinct()
 
 
 @method_decorator(login_required, name="dispatch")
