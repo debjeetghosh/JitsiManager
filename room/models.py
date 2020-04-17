@@ -1,3 +1,5 @@
+from time import time
+
 from django.db import models
 
 # Create your models here.
@@ -18,4 +20,13 @@ class Room(models.Model):
     start_time = models.BigIntegerField(default=0)
     end_time = models.BigIntegerField(default=0)
     max_length = models.IntegerField(_("Maximum meeting time length (in Minutes)"), default=-1)
+
+    def status(self):
+        time_now = int(time())*1000
+        if self.start_time > time_now:
+            return "Not started yet"
+        if self.start_time < time_now and self.max_length > 0:
+            if time_now > (self.start_time+self.max_length):
+                return "Ended"
+        return "On going"
 

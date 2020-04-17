@@ -15,6 +15,7 @@
             <th>Start time</th>
             <th>Maximum number of users</th>
             <th>Maximum meeting time length (in Minutes)</th>
+            <th>Status</th>
             <th>Created by</th>
             <th></th>
         </tr>
@@ -38,12 +39,15 @@
                     {{ room.max_length }}
                     {% endif %}
                 </td>
+                <td>{{ room.status }}</td>
                 <td>{{ room.created_by }}</td>
                 <td>
                     {% if room.created_by == user %}
                         <a href="{% url 'room:room_update' room.id %}" class="btn btn-primary">Update Meeting</a>
                     {% endif %}
+                    {% if room.status == 'On going' %}
                     <a href="{% url 'room:join_room' room.id %}" class="btn btn-primary">Join Meeting</a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}

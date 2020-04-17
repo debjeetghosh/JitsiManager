@@ -27,6 +27,7 @@ class RoomCreateView(View):
     form = RoomForm
 
     def get(self, request):
+
         if not request.user.is_staff and not request.user.is_superuser and not Restrictions.can_create_new_room(request.user) :
             max_room_count = Restrictions.objects.get(user=request.user).max_room_count
             messages.add_message(request, messages.ERROR, 'You cannot create more than {} meetings.'.format(max_room_count))
