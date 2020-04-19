@@ -90,8 +90,8 @@ class RoomListView(ListView):
 
 @method_decorator(login_required, name="dispatch")
 class RoomJsonDetailsView(View):
-    def get(self):
-        room_id = self.kwargs.get('pk')
+    def get(self, request, *args, **kwargs):
+        room_id = kwargs.get('pk')
         room = Room.objects.get(pk = room_id)
         room_dict = {
             "id": room.id,
