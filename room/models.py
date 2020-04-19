@@ -18,6 +18,7 @@ class Room(models.Model):
     is_active = models.BooleanField(default=True)
     max_number_of_user = models.IntegerField(_("Maximum number of users"), default=-1)
     start_time = models.BigIntegerField(default=0)
+    host_join_time = models.BigIntegerField(null=True)
     end_time = models.BigIntegerField(default=0)
     max_length = models.IntegerField(_("Maximum meeting time length (in Minutes)"), default=-1)
 
@@ -26,7 +27,7 @@ class Room(models.Model):
         if self.start_time > time_now:
             return "Not started yet"
         if self.start_time < time_now and self.max_length > 0:
-            if time_now > (self.start_time+self.max_length):
+            if time_now > (self.start_time+self.max_length*60*1000):
                 return "Ended"
         return "On going"
 

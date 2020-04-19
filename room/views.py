@@ -6,6 +6,7 @@ import jwt
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 # Create your views here.
@@ -42,7 +43,7 @@ class RoomCreateView(View):
             room.room_id = uuid.uuid4()
             room.created_by = request.user
             if room.max_length > 0:
-                room.end_time = room.start_time + room.max_length
+                room.end_time = room.start_time + room.max_length*60*1000
             room.save()
             form.save_m2m()
             return redirect(reverse('room:room_list'))
@@ -67,7 +68,7 @@ class RoomUpdateView(View):
         if form.is_valid():
             room = form.save(commit=False)
             if room.max_length > 0:
-                room.end_time = room.start_time + room.max_length
+                room.end_time = room.start_time + room.max_length*60*1000
             room.save()
 
             form.save_m2m()
@@ -88,6 +89,19 @@ class RoomListView(ListView):
 
 
 @method_decorator(login_required, name="dispatch")
+class RoomJsonDetailsView(View):
+    def get(self):
+        room_id = self.kwargs.get('pk')
+        room = Room.objects.get(pk = room_id)
+        room_dict = {
+            "id": room.id,
+            "start_time": room.start_time,
+            "max_length": room.max_length,
+            "host_join_time": room.host_join_time
+        }
+        return JsonResponse(data=room_dict)
+
+@method_decorator(login_required, name="dispatch")
 class RoomJoinView(View):
     template = 'room/join.html'
 
@@ -102,6 +116,11 @@ class RoomJoinView(View):
         elif room_obj.created_by == request.user:
             has_access = True
 
+        if room_obj.created_by == request.user:
+            if not room_obj.host_join_time:
+                room_obj.host_join_time = int(time())*1000
+                room_obj.save()
+            is_moderator = True
         if is_active and has_access:
             headers = {
             }
@@ -131,6 +150,7 @@ class RoomJoinView(View):
                 "exp": 1685141372
             }
             domain = 'talk.gomeeting.org'
+            creator = room_obj.created_by.profile.user_uid
             token = jwt.encode(payload, "example_app_secret", algorithm='HS256', headers=headers).decode('utf-8')
             return render(request, self.template, locals())
 

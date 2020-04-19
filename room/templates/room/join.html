@@ -20,9 +20,13 @@
                 </div>
 
             </div>
+        {% endif %}
+{% endblock %}
+{% block page_scripts %}
+    <script src='{% static 'js/external_api.min.js' %}'></script>
+    <script type="text/javascript">
 
-        <script src='https://talk.gomeeting.org/libs/external_api.min.js'></script>
-        <script type="text/javascript">
+        $(function () {
             const domain = '{{ domain }}';
             const options = {
                 roomName: '{{ room_obj.room_id }}',
@@ -33,6 +37,10 @@
 
             };
             const api = new JitsiMeetExternalAPI(domain, options);
+            var isModeratorHere = false;
+            {% if is_moderator %}
+                isModeratorHere = true;
+            {% endif %}
             api.executeCommand('displayName', '{{ user.profile.name }}');
 
             api.executeCommand('subject', '{{ room_obj.name }}');
@@ -41,16 +49,29 @@
                 window.location = "{% url 'room:room_list' %}";
             });
 
-        </script>
-        {% endif %}
-{% endblock %}
-{% block page_scripts %}
-    <script type="text/javascript">
-        $(function () {
-            {% if room_obj.start_time and room_obj.max_length > 0 %}
-                var start_time = {{ room_obj.start_time }};
-                var end_time = {{ room_obj.start_time }} + parseInt({{ room_obj.max_length }})*60*1000;
-                setInterval(function(){
+            api.addEventListener('participantJoined', function (data) {
+                {% if not room_obj.host_join_time and room_obj.max_length > 0 %}
+                    if(!isModeratorHere) {
+                        $.ajax({
+                            url: '{% url 'room:room_json_details' room_obj.id %}'
+                        }).done(function (data) {
+                            if(data['host_join_time'] && data['max_length']) {
+                                console.log("Moderator joined");
+                                isModeratorHere = true;
+                                startCountDown(parseInt(data['host_join_time']), parseInt(data['max_length']) )
+                            }
+                        });
+                    }
+                {% endif %}
+            });
+
+            {% if room_obj.host_join_time and room_obj.max_length > 0  %}
+                startCountDown({{ room_obj.host_join_time }}, {{ room_obj.max_length }});
+            {% endif %}
+
+            function startCountDown(start_time, max_length) {
+                var end_time = start_time + max_length * 60 * 1000;
+                setInterval(function () {
                     if(end_time-moment().valueOf()>0) {
                         var remaining_time = moment.duration(end_time - moment().valueOf(), 'milliseconds');
                         $("#remaining_time_span").text(remaining_time.minutes() + " minutes" + remaining_time.seconds() + " seconds");
@@ -60,7 +81,7 @@
                         window.location = "{% url 'room:room_list' %}";
                     }
                 }, 1000);
-            {% endif %}
+            }
         });
     </script>
 {% endblock %}
