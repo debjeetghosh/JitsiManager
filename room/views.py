@@ -164,18 +164,18 @@ class GuestJoinView(View):
         if room_obj.password:
             form = self.password_form(room=room_obj)
             return render(request, self.password_template, locals())
-        self.join_room(room_obj=room_obj)
+        return self.join_room(request, room_obj=room_obj)
 
     def post(self, request, *args, **kwargs):
         room_obj = get_object_or_404(Room, room_id=kwargs.get('uid'))
         if room_obj.password:
             form = self.password_form(room=room_obj, data=request.POST)
             if form.is_valid():
-                self.join_room(room_obj)
+                return self.join_room(request, room_obj)
             return render(request, self.password_template, locals())
-        self.join_room(room_obj)
+        return self.join_room(request, room_obj)
 
-    def join_room(self, room_obj):
+    def join_room(self, request, room_obj):
         is_active = True
         has_access = False
         if not room_obj.is_active:
@@ -214,4 +214,4 @@ class GuestJoinView(View):
             domain = 'talk.gomeeting.org'
             creator = room_obj.created_by.profile.user_uid
             token = jwt.encode(payload, "example_app_secret", algorithm='HS256', headers=headers).decode('utf-8')
-            return render(self.request, self.template, locals())
+            return render(request, self.template, locals())
