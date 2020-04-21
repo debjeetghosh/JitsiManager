@@ -13,6 +13,7 @@ class RoomForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super(RoomForm, self).__init__(*args, **kwargs)
         self.user = user
+        self.fields['password'].required = False
 
     def clean(self):
         super().clean()
@@ -28,7 +29,7 @@ class RoomForm(forms.ModelForm):
 
     class Meta:
         model = Room
-        fields = ['name', 'max_number_of_user', 'max_length', 'start_time']
+        fields = ['name', 'password', 'max_number_of_user', 'max_length', 'start_time']
         help_texts = {
             "max_number_of_user": "Please put -1 if you want unlimited",
             "max_length": "Please put -1 if you want unlimited",
@@ -36,6 +37,7 @@ class RoomForm(forms.ModelForm):
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'password': forms.TextInput(attrs={'class': 'form-control'}),
             'max_number_of_user': forms.TextInput(attrs={'class': 'form-control'}),
             'max_length': forms.TextInput(attrs={'class': 'form-control'}),
             'start_time': forms.HiddenInput()

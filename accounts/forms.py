@@ -9,6 +9,12 @@ class LoginForm(forms.Form):
     password = forms.CharField(max_length=200, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 
+class UpdateAdminForm(forms.ModelForm):
+    class Meta:
+        model = JitsiUser
+        fields = ['is_active']
+
+
 class UserForm(forms.ModelForm):
     class Meta:
         model = JitsiUser
@@ -32,11 +38,9 @@ class UserProfileForm(forms.ModelForm):
         model = UserProfile
         fields = [
             'name',
-            'user_type'
         ]
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'user_type': forms.Select(attrs={'class': 'form-control'})
         }
 

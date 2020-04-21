@@ -21,6 +21,7 @@ class Room(models.Model):
     host_join_time = models.BigIntegerField(null=True)
     end_time = models.BigIntegerField(default=0)
     max_length = models.IntegerField(_("Maximum meeting time length (in Minutes)"), default=-1)
+    password = models.CharField(max_length=20, null=True)
 
     def status(self):
         time_now = int(time())*1000

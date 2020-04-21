@@ -41,17 +41,12 @@
             {% if is_moderator %}
                 isModeratorHere = true;
             {% endif %}
-            api.executeCommand('displayName', '{{ user.profile.name }}');
 
             api.executeCommand('subject', '{{ room_obj.name }}');
 
-            api.addEventListener('videoConferenceLeft', function () {
-                window.location = "{% url 'room:room_list' %}";
-            });
-
-            {% if room_obj.password %}
-                api.executeCommand('password', '{{ room_obj.password }}');
-            {% endif %}
+            {#api.addEventListener('videoConferenceLeft', function () {#}
+            {#    window.location = "{% url 'room:room_list' %}";#}
+            {# }); #}
 
             api.addEventListener('participantJoined', function (data) {
                 {% if not room_obj.host_join_time and room_obj.max_length > 0 %}
@@ -82,7 +77,7 @@
                     }
                     else{
                         $("#remaining_time_span").text("Finished");
-                        window.location = "{% url 'room:room_list' %}";
+
                     }
                 }, 1000);
             }

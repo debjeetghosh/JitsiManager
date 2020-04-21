@@ -83,9 +83,8 @@ class RoomListView(ListView):
     def get_queryset(self):
         now_time = int(time())*1000
         return Room.objects.filter(
-            Q(max_length__gt=0, end_time__gte=now_time)|
-            Q(room_type=Room.PUBLIC) | Q(created_by=self.request.user)
-        ).distinct()
+            created_by=self.request.user
+        )
 
 
 @method_decorator(login_required, name="dispatch")
@@ -153,5 +152,51 @@ class RoomJoinView(View):
             creator = room_obj.created_by.profile.user_uid
             token = jwt.encode(payload, "example_app_secret", algorithm='HS256', headers=headers).decode('utf-8')
             return render(request, self.template, locals())
+
+
+class GuestJoinView(View):
+    template = "room/join_guest.html"
+    def get(self, request, *args, **kwargs):
+        room_obj = get_object_or_404(Room, room_id=kwargs.get('uid'))
+        is_active = True
+        has_access = False
+        if not room_obj.is_active:
+            is_active = False
+        if room_obj.room_type == Room.PUBLIC:
+            has_access = True
+        if is_active and has_access and room_obj.host_join_time:
+            user_uid = uuid.uuid4()
+            headers = {
+            }
+            payload = {
+                "context": {
+                    "user": {
+                        "avatar": "https:/gravatar.com/avatar/abc123",
+                        "name": "",
+                        "email": '',
+                        "id": str(user_uid),
+                        "p_id": 0,
+                        "room_id": str(room_obj.id)
+                    },
+                    "room_info": {
+                        "id": str(room_obj.id),
+                        "name": room_obj.name,
+                        "creator": room_obj.created_by.profile.user_uid,
+                        "room_type": room_obj.room_type,
+                        "moderator": room_obj.created_by.profile.user_uid
+                    },
+                    "group": "a123-123-456-789"
+                },
+                "aud": JITSI_AUD,
+                "iss": JITSI_ISSUER,
+                "sub": "example_app_id",
+                "room": room_obj.room_id,
+                "exp": 1685141372
+            }
+            domain = 'talk.gomeeting.org'
+            creator = room_obj.created_by.profile.user_uid
+            token = jwt.encode(payload, "example_app_secret", algorithm='HS256', headers=headers).decode('utf-8')
+            return render(request, self.template, locals())
+
 
 

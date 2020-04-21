@@ -31,8 +31,8 @@ class JitsiUser(AbstractUser):
 
 
 class UserProfile(models.Model):
-    CREATOR, MEMBER = 'creator', 'member'
-    USER_TYPE_CHOICES = ((CREATOR, "Content Creator"), (MEMBER, "General member"))
+    CREATOR, ADMIN = 'creator', 'admin'
+    USER_TYPE_CHOICES = ((CREATOR, "Content Creator"), (ADMIN, "Admin member"), )
 
     user = models.OneToOneField(JitsiUser, models.DO_NOTHING, related_name='profile')
     user_uid = models.CharField(max_length=255, default='')

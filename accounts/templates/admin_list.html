@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block contents %}
+    {% if user.is_staff %}
+    <div>
+    <h3 class="pull-left">Manage admins</h3>
+
+    <div class="clearfix"></div>
+    </div>
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Active</th>
+            <th></th>
+        </tr>
+        {% for admin in object_list %}
+            <tr>
+                <td>{{ admin.user.first_name }}</td>
+                <td>
+                    {{ admin.user.username }}
+                </td>
+                <td>
+                    {{ admin.user.email }}
+                </td>
+                <td>
+                    {% if admin.user.is_active %}
+                    Active
+                    {% else %}
+                        Inactive
+                    {% endif %}
+                </td>
+
+                <td>
+                    <a href="{% url 'accounts:admin_update' admin.user.id %}" class="btn btn-primary">Update</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <div class="alert alert-danger">
+            You do not have access to this page yet
+        </div>
+    {% endif %}
+{% endblock %}

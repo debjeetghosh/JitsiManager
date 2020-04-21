@@ -13,7 +13,7 @@
             {{ form.errors }}
         </div>
     {% endif %}
-    {% if user.profile.user_type == 'creator' %}
+
     <form action="." method="post">
         {% csrf_token %}
         {{ form.start_time }}
@@ -50,9 +50,7 @@
             {% endif %}
         </button>
     </form>
-    {% else %}
-        <h3 class="text-center">You are not room creator. You have to register as creator.</h3>
-    {% endif %}
+
 {% endblock %}
 
 {% block page_script %}

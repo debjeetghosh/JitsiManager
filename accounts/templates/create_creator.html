@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contents %}
+        {% if user.profile.user_type == 'admin' %}
+        <div class="">
+            <h1>Create creator</h1>
+        </div>
+        {% if errors %}
+            <div class="alert alert-danger">{{ errors }}</div>
+        {% endif %}
+        <div>
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+            <form action="." method="post">
+                {% csrf_token %}
+                {% for field in form.visible_fields %}
+                    <div class="form-group">
+                        {% if field.field.widget.is_hidden is not True %}
+                            {% if field.field.required %}
+                                <label>{{ field.label }}<span class="required"> * </span></label>
+                            {% else %}
+                                <label>{{ field.label }}</label>
+                            {% endif %}
+                        {% endif %}
+                        {{ field }}
+                    </div>
+                {% endfor %}
+
+                {% for field in profile_form.visible_fields %}
+                    <div class="form-group">
+                        {% if field.field.widget.is_hidden is not True %}
+                            {% if field.field.required %}
+                                <label>{{ field.label }}<span class="required"> * </span></label>
+                            {% else %}
+                                <label>{{ field.label }}</label>
+                            {% endif %}
+                        {% endif %}
+                        {{ field }}
+                    </div>
+                {% endfor %}
+                {% for field in restriction_form.visible_fields %}
+                    <div class="form-group">
+                        {% if field.field.widget.is_hidden is not True %}
+                            {% if field.field.required %}
+                                <label>{{ field.label }}<span class="required"> * </span></label>
+                            {% else %}
+                                <label>{{ field.label }}</label>
+                            {% endif %}
+                        {% endif %}
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Create</button>
+
+            </form>
+        </div>
+    {% else %}
+    <div class="alert alert-danger">
+    You do not have access to this page yet
+    </div>
+    {% endif %}
+{% endblock %}

@@ -9,9 +9,15 @@
         <li><a href="{% url 'room:room_list' %}"> <i class="fa fa-angle-double-right" aria-hidden="true"></i>Meetings</a></li>
 
         <br>
-        {% if user.is_staff %}
+        {% if user.profile.user_type == 'admin' %}
         <li class="sidebar-title" style="margin-top: 0;">User Management</li>
         <li><a href="{% url 'restrictions:restriction_list' %}"> <i class="fa fa-angle-double-right" aria-hidden="true"></i>Mange users</a></li>
+        <li><a href="{% url 'accounts:create_creator' %}"> <i class="fa fa-angle-double-right" aria-hidden="true"></i>Create creator</a></li>
+        {% endif %}
+
+        {% if user.is_staff %}
+            <li class="sidebar-title" style="margin-top: 0;">Admin User Management</li>
+            <li><a href="{% url 'accounts:admin_list' %}"> <i class="fa fa-angle-double-right" aria-hidden="true"></i>Mange admin</a></li>
         {% endif %}
 
 

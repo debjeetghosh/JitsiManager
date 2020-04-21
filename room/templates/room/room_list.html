@@ -2,11 +2,10 @@
 {% block contents %}
     <div>
     <h3 class="pull-left">Meeting List</h3>
-    {% if user.profile.user_type == 'creator' %}
+
     <div class="pull-right">
         <a href="{% url 'room:create_room' %}" class="btn btn-primary">Create a new meeting</a>
     </div>
-    {% endif %}
     <div class="clearfix"></div>
     </div>
     <table class="table">
@@ -44,14 +43,18 @@
                 <td>
                     {% if room.created_by == user %}
                         <a href="{% url 'room:room_update' room.id %}" class="btn btn-primary">Update Meeting</a>
-                    {% endif %}
-                    {% if room.status == 'On going' %}
-                    <a href="{% url 'room:join_room' room.id %}" class="btn btn-primary">Join Meeting</a>
+                        <a href="{% url 'room:join_room' room.id %}" class="btn btn-primary">Join Meeting</a>
+
+                        <button type="button" class="btn btn-primary" data-container="body" data-toggle="popover" data-placement="top" data-content="http://{{ request.get_host }}{% url 'room:join_guest_room' room.room_id %}">
+                          Sharable link
+                        </button>
+
                     {% endif %}
                 </td>
             </tr>
         {% endfor %}
     </table>
+    <span class="share_link_span" style="display: none;"></span>
 {% endblock %}
 {% block page_script %}
     <script type="text/javascript">
@@ -66,6 +69,7 @@
             }
 
         });
+        $('[data-toggle="popover"]').popover();
     });
     </script>
 {% endblock %}
