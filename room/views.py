@@ -1,3 +1,4 @@
+import secrets
 import uuid
 from time import time
 from uuid import UUID
@@ -40,7 +41,7 @@ class RoomCreateView(View):
         form = self.form(data=request.POST, user=request.user)
         if form.is_valid():
             room = form.save(commit=False)
-            room.room_id = uuid.uuid4()
+            room.room_id = secrets.token_urlsafe(12)
             room.created_by = request.user
             if room.max_length > 0:
                 room.end_time = room.start_time + room.max_length*60*1000
