@@ -38,7 +38,7 @@ class RoomCreateView(View):
 
     def post(self, request):
         form = self.form(data=request.POST, user=request.user)
-        if form.is_valid() and request.user.profile.user_type == UserProfile.CREATOR:
+        if form.is_valid():
             room = form.save(commit=False)
             room.room_id = uuid.uuid4()
             room.created_by = request.user
