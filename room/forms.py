@@ -11,6 +11,7 @@ class RoomPasswordForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
     def __init__(self, room, *args, **kwargs):
+        super(RoomPasswordForm, self).__init__(*args, **kwargs)
         self.room = room
 
     def clean(self):
