@@ -175,7 +175,7 @@ class GuestJoinView(View):
                         "name": str(user_uid),
                         "email": '',
                         "id": str(user_uid),
-                        "p_id": 0,
+                        "p_id": "0",
                         "room_id": str(room_obj.id)
                     },
                     "room_info": {
