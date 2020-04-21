@@ -41,7 +41,7 @@ class RoomCreateView(View):
         form = self.form(data=request.POST, user=request.user)
         if form.is_valid():
             room = form.save(commit=False)
-            room.room_id = secrets.token_urlsafe(12)
+            room.room_id = str(int(time())*1000)
             room.created_by = request.user
             if room.max_length > 0:
                 room.end_time = room.start_time + room.max_length*60*1000
