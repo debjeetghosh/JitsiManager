@@ -3,6 +3,11 @@
     {% if user.is_staff %}
     <div>
     <h3 class="pull-left">Manage admins</h3>
+        <div class="pull-right">
+            {% if user.is_staff and user.is_superuser %}
+                <a href="{% url 'accounts:create_admin' %}" class="btn btn-primary">Create an admin</a>
+            {% endif %}
+        </div>
 
     <div class="clearfix"></div>
     </div>
@@ -12,6 +17,8 @@
             <th>Username</th>
             <th>Email</th>
             <th>Active</th>
+            <th>Staff</th>
+            <th>Superuser</th>
             <th></th>
         </tr>
         {% for admin in object_list %}
@@ -28,6 +35,20 @@
                     Active
                     {% else %}
                         Inactive
+                    {% endif %}
+                </td>
+                <td>
+                    {% if admin.user.is_staff %}
+                    Staff
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if admin.user.is_superuser %}
+                    Super User
+                    {% else %}
+                        -
                     {% endif %}
                 </td>
 

@@ -100,12 +100,52 @@ class CreateUserView(View):
         return render(request, self.template, locals())
 
 @method_decorator(login_required, name='dispatch')
+class CreateAdminView(View):
+    form = UserForm
+    profile_form = UserProfileForm
+    template = 'create_admin.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form()
+        profile_form = self.profile_form()
+        return render(request, self.template, locals())
+
+    def post(self, request, *args, **kwargs):
+        form = self.form(request.POST)
+        profile_form = self.profile_form(request.POST)
+        if form.is_valid() and profile_form.is_valid():
+            user = form.save(commit=False)
+            user.password = make_password(form.cleaned_data.get('password'))
+            user.first_name, user.last_name = split_name(profile_form.cleaned_data.get('name'))
+            user.save()
+
+            user_profile = profile_form.save(commit=False)
+            user_profile.user_uid = uuid.uuid4()
+            user_profile.user = user
+            user_profile.user_type = UserProfile.ADMIN
+            user_profile.save()
+
+            Restrictions.objects.create(
+                user=user,
+                max_member_count=-1,
+                max_room_count=-1,
+                max_time_length=-1
+            )
+
+            return redirect(reverse("accounts:dashboard"))
+        return render(request, self.template, locals())
+
+@method_decorator(login_required, name='dispatch')
 class AdminListView(ListView):
     model = UserProfile
     template_name = 'admin_list.html'
 
     def get_queryset(self):
-        return UserProfile.objects.filter(user_type=UserProfile.ADMIN, user__is_staff=False, user__is_superuser=False)
+        if self.request.user.is_superuser:
+            return UserProfile.objects.filter(user_type=UserProfile.ADMIN)
+        elif self.request.user.is_staff:
+            return UserProfile.objects.filter(user_type=UserProfile.ADMIN, user__is_superuser=False)
+        return UserProfile.objects.filter(user_type=UserProfile.ADMIN, user__is_superuser=False, user__is_staff=False)
 
 
 @method_decorator(login_required, name='dispatch')

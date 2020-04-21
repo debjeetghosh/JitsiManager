@@ -12,7 +12,7 @@ class LoginForm(forms.Form):
 class UpdateAdminForm(forms.ModelForm):
     class Meta:
         model = JitsiUser
-        fields = ['is_active']
+        fields = ['is_active', 'is_staff', 'is_superuser']
 
 
 class UserForm(forms.ModelForm):

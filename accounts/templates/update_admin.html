@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block contents %}
-    {% if user.is_staff %}
+    {% if user.is_staff and user.is_superuser and user.profile.user_type == 'admin' %}
     <h1>Update admin user</h1>
     {% if form.errors %}
         <div class="alert alert-danger">

@@ -8,6 +8,7 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('login/submit/', login_submit, name='login_submit'),
     path('create/creator/', CreateUserView.as_view(), name="create_creator"),
+    path('create/admin/', CreateAdminView.as_view(), name="create_admin"),
     path('admins/', AdminListView.as_view(), name="admin_list"),
     path('admins/<int:pk>/update/', AdminUpdateView.as_view(), name="admin_update"),
     path('', dashboard, name='dashboard'),
