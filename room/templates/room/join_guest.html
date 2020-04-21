@@ -33,7 +33,17 @@
                 width: '100%',
                 height: 700,
                 parentNode: document.querySelector('#meet'),
-                jwt: '{{ token }}'
+                jwt: '{{ token }}',
+                interfaceConfigOverwrite: {
+                    TOOLBAR_BUTTONS: [
+                        'microphone', 'camera', 'desktop', 'fullscreen',
+                        'fodeviceselection', 'hangup', 'profile', 'info', 'chat',
+                         'etherpad', 'sharedvideo', 'settings', 'raisehand',
+                        'videoquality', 'filmstrip',   'shortcuts',
+                        'tileview',  'mute-everyone',
+                        'e2ee'
+                    ],
+                }
 
             };
             const api = new JitsiMeetExternalAPI(domain, options);
