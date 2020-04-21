@@ -47,9 +47,11 @@
                         <a href="{% url 'room:room_update' room.id %}" class="btn btn-primary">Update Meeting</a>
                         <a href="{% url 'room:join_room' room.id %}" class="btn btn-primary">Join Meeting</a>
 
+
                         <button type="button" class="btn btn-primary" data-container="body" data-toggle="popover" data-placement="top" data-content="http://{{ request.get_host }}{% url 'room:join_guest_room' room.room_id %}">
                           Sharable link
                         </button>
+                        <a href="{% url 'room:delete_room' room.id %}" class="btn btn-danger">Delete Meeting</a>
 
                     {% endif %}
                 </td>

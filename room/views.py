@@ -155,6 +155,14 @@ class RoomJoinView(View):
             return render(request, self.template, locals())
 
 
+@method_decorator(login_required, name="dispatch")
+class RoomDeleteView(View):
+    def get(self, request, *args, **kwargs):
+        room_id = kwargs.get('pk')
+        room = Room.objects.get(created_by=request.user, id=room_id)
+        room.delete()
+        return redirect(reverse('room:room_list'))
+
 class GuestJoinView(View):
     template = "room/join_guest.html"
     password_template = 'room/password_prompt.html'
