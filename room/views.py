@@ -183,7 +183,7 @@ class GuestJoinView(View):
             is_active = False
         if room_obj.room_type == Room.PUBLIC:
             has_access = True
-        if is_active and has_access and room_obj.host_join_time:
+        if is_active and has_access:
             user_uid = uuid.uuid4()
             headers = {
             }
