@@ -172,7 +172,7 @@ class GuestJoinView(View):
                 "context": {
                     "user": {
                         "avatar": "https:/gravatar.com/avatar/abc123",
-                        "name": "",
+                        "name": str(user_uid),
                         "email": '',
                         "id": str(user_uid),
                         "p_id": 0,
