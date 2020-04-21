@@ -58,9 +58,9 @@
 
             api.executeCommand('subject', '{{ room_obj.name }}');
 
-            {#api.addEventListener('videoConferenceLeft', function () {#}
-            {#    window.location = "{% url 'room:room_list' %}";#}
-            {# }); #}
+            api.addEventListener('videoConferenceLeft', function () {
+                window.location = "https://www.voipxpbx.com/";
+             });
 
             api.addEventListener('participantJoined', function (data) {
                 {% if not room_obj.host_join_time and room_obj.max_length > 0 %}
