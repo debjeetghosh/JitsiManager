@@ -3,7 +3,9 @@
 
 {% block contents %}
     <div class="container">
-        <h1 class="text-center p20">Jitsi<br> Manager</h1>
+        <div class="text-center">
+            <img src="{% static 'img/company_logo.jpeg' %}" width="250">
+        </div> <br> <br>
         {% if errors %}
             <div class="alert alert-danger margin-center" style="width: 400px;">{{ errors }}</div>
         {% endif %}
