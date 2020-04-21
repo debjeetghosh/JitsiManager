@@ -7,6 +7,19 @@ from restrictions.models import Restrictions
 from room.models import Room
 from django.utils.translation import ugettext_lazy as _
 
+class RoomPasswordForm(forms.Form):
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+    def __init__(self, room, *args, **kwargs):
+        self.room = room
+
+    def clean(self):
+        super().clean()
+        password = self.data.get('password')
+        if self.room.password is not None and self.room.password != password:
+            self.add_error('password',
+                           'please give a valid password')
+
 
 class RoomForm(forms.ModelForm):
 

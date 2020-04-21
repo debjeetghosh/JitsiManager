@@ -18,7 +18,7 @@ from django.views.generic import ListView
 from accounts.models import UserProfile
 from jitsi_helper.settings import JITSI_AUD, JITSI_ISSUER, JITSI_PRIVATE_KEY, JITSI_URL
 from restrictions.models import Restrictions
-from room.forms import RoomForm
+from room.forms import RoomForm, RoomPasswordForm
 from room.models import Room
 
 
@@ -156,8 +156,26 @@ class RoomJoinView(View):
 
 class GuestJoinView(View):
     template = "room/join_guest.html"
+    password_template = 'room/password_prompt.html'
+    password_form = RoomPasswordForm
+
     def get(self, request, *args, **kwargs):
         room_obj = get_object_or_404(Room, room_id=kwargs.get('uid'))
+        if room_obj.password:
+            form = self.password_form(room=room_obj)
+            return render(request, self.password_template, locals())
+        self.join_room(room_obj=room_obj)
+
+    def post(self, request, *args, **kwargs):
+        room_obj = get_object_or_404(Room, room_id=kwargs.get('uid'))
+        if room_obj.password:
+            form = self.password_form(room=room_obj, data=request.POST)
+            if form.is_valid():
+                self.join_room(room_obj)
+            return render(request, self.password_template, locals())
+        self.join_room(room_obj)
+
+    def join_room(self, room_obj):
         is_active = True
         has_access = False
         if not room_obj.is_active:
@@ -196,7 +214,4 @@ class GuestJoinView(View):
             domain = 'talk.gomeeting.org'
             creator = room_obj.created_by.profile.user_uid
             token = jwt.encode(payload, "example_app_secret", algorithm='HS256', headers=headers).decode('utf-8')
-            return render(request, self.template, locals())
-
-
-
+            return render(self.request, self.template, locals())
