@@ -87,7 +87,11 @@
                 setInterval(function () {
                     if(end_time-moment().valueOf()>0) {
                         var remaining_time = moment.duration(end_time - moment().valueOf(), 'milliseconds');
-                        $("#remaining_time_span").text(remaining_time.minutes() + " minutes" + remaining_time.seconds() + " seconds");
+                        var remaining_time_text = remaining_time.minutes() + " minutes " + remaining_time.seconds() + " seconds";
+                        if(remaining_time.hours() > 0) {
+                            remaining_time_text = remaining_time.hours() + " hours "+remaining_time_text;
+                        }
+                        $("#remaining_time_span").text(remaining_time_text);
                     }
                     else{
                         $("#remaining_time_span").text("Finished");
