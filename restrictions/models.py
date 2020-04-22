@@ -16,6 +16,8 @@ class Restrictions(models.Model):
 	def can_create_new_room(user):
 		restriction = Restrictions.objects.filter(user=user).first()
 		if restriction:
+			if restriction.max_room_count < 0:
+				return True
 			rooms_by_user = Room.objects.filter(created_by=user)
 			if rooms_by_user.count() >= restriction.max_room_count:
 				return False
