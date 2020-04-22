@@ -127,7 +127,7 @@ local function check_for_max_occupants(event)
 	if room and not room._jid_nick[stanza.attr.from] then
 		local count = count_keys(room._occupants);
 		local slots = MAX_OCCUPANTS;
-
+        module:log("warn","room_keys: %s", count);
 		-- If there is no whitelist, just check the count.
 
 		-- TODO: Are Prosody hooks atomic, or is this a race condition?
