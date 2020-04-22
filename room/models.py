@@ -14,7 +14,7 @@ class Room(models.Model):
     name = models.CharField(max_length=255)
     room_id = models.CharField(max_length=255)
     room_type = models.CharField(max_length=255, choices=ROOM_TYPE, default='public')
-    created_by = models.ForeignKey(JitsiUser, on_delete=models.DO_NOTHING, related_name='created_rooms')
+    created_by = models.ForeignKey(JitsiUser, on_delete=models.CASCADE, related_name='created_rooms')
     is_active = models.BooleanField(default=True)
     max_number_of_user = models.IntegerField(_("Maximum number of users"), default=-1)
     start_time = models.BigIntegerField(default=0)

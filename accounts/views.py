@@ -100,6 +100,15 @@ class CreateUserView(View):
         return render(request, self.template, locals())
 
 @method_decorator(login_required, name='dispatch')
+class DeleteUserView(View):
+    def get(self, request, *args, **kwargs):
+        if request.user.is_staff and request.user.profile.user_type == UserProfile.ADMIN and request.user.is_superuser:
+            user_id = kwargs.get('pk')
+            JitsiUser.objects.get(id=user_id).delete()
+            return redirect(reverse("accounts:dashboard"))
+
+
+@method_decorator(login_required, name='dispatch')
 class CreateAdminView(View):
     form = UserForm
     profile_form = UserProfileForm

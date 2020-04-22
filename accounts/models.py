@@ -34,7 +34,7 @@ class UserProfile(models.Model):
     CREATOR, ADMIN = 'creator', 'admin'
     USER_TYPE_CHOICES = ((CREATOR, "Content Creator"), (ADMIN, "Admin member"), )
 
-    user = models.OneToOneField(JitsiUser, models.DO_NOTHING, related_name='profile')
+    user = models.OneToOneField(JitsiUser, models.CASCADE, related_name='profile')
     user_uid = models.CharField(max_length=255, default='')
     name = models.CharField(max_length=255)
     user_type = models.CharField(choices=USER_TYPE_CHOICES, max_length=255)
