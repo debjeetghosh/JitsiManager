@@ -143,7 +143,7 @@ local function check_for_max_occupants(event)
 		end
 
 		-- If the room is full (<0 slots left), error out.
-		if slots <= 0 then
+		if slots < 0 then
 			module:log("info", "Attempt to enter a maxed out MUC");
 			origin.send(st.error_reply(stanza, "cancel", "service-unavailable"));
 			return true;
