@@ -18,10 +18,15 @@ class UpdateAdminForm(forms.ModelForm):
 class OtpForm(forms.Form):
     otp = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
+    def __init__(self, key, *args, **kwargs):
+        super(OtpForm, self).__init__(*args, **kwargs)
+        self.key = key
+
+
     def clean(self):
         super().clean()
         otp = self.data.get('otp')
-        if not pyotp.TOTP("JBSWY3DPEHPK3PXP").verify(otp):
+        if not pyotp.TOTP(self.key).verify(otp):
             self.add_error('otp',
                            'please give an otp')
 

@@ -114,14 +114,20 @@ class VerifyOtpView(View):
     form = OtpForm
 
     def get(self, request):
-        qr_code_text = pyotp.totp.TOTP('JBSWY3DPEHPK3PXP').provisioning_uri(request.user.username, issuer_name="Secure App")
-        form = self.form()
+        if not request.user.profile.totp_key:
+            profile = request.user.profile
+            profile.totp_key = pyotp.random_base32()
+            profile.save()
+        qr_code_text = pyotp.totp.TOTP(request.user.profile.totp_key).provisioning_uri(request.user.username, issuer_name="Secure App")
+        form = self.form(key=request.user.profile.totp_key)
         return render(request, self.template, locals())
 
     def post(self, request):
-        form = self.form(request.POST)
+        form = self.form(data=request.POST, key=request.user.profile.totp_key)
         if form.is_valid():
             return redirect(reverse('accounts:dashboard'))
+        qr_code_text = pyotp.totp.TOTP(request.user.profile.totp_key).provisioning_uri(request.user.username,
+                                                                                       issuer_name="Secure App")
         return render(request, self.template, locals())
 
 

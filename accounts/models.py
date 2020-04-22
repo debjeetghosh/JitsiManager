@@ -38,3 +38,4 @@ class UserProfile(models.Model):
     user_uid = models.CharField(max_length=255, default='')
     name = models.CharField(max_length=255)
     user_type = models.CharField(choices=USER_TYPE_CHOICES, max_length=255)
+    totp_key = models.CharField(max_length=20, null=True)
