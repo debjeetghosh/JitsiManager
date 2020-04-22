@@ -1,3 +1,4 @@
+import pyotp
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 
@@ -13,6 +14,16 @@ class UpdateAdminForm(forms.ModelForm):
     class Meta:
         model = JitsiUser
         fields = ['is_active', 'is_staff', 'is_superuser']
+
+class OtpForm(forms.Form):
+    otp = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    def clean(self):
+        super().clean()
+        otp = self.data.get('otp')
+        if not pyotp.TOTP("JBSWY3DPEHPK3PXP").verify(otp):
+            self.add_error('otp',
+                           'please give an otp')
 
 
 class UserForm(forms.ModelForm):

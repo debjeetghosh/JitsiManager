@@ -1,5 +1,6 @@
 import uuid
 
+import pyotp
 from django import views
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -14,7 +15,7 @@ from django.views import View
 from django.views.generic import ListView
 
 from accounts.auth_helper import is_user_admin
-from accounts.forms import LoginForm, UserForm, UserProfileForm, UpdateAdminForm
+from accounts.forms import LoginForm, UserForm, UserProfileForm, UpdateAdminForm, OtpForm
 from accounts.models import UserProfile, JitsiUser
 from restrictions.forms import RestrictionFormWithoutUserForm
 from restrictions.models import Restrictions
@@ -107,6 +108,23 @@ class DeleteUserView(View):
             JitsiUser.objects.get(id=user_id).delete()
             return redirect(reverse("accounts:dashboard"))
 
+@method_decorator(login_required, name='dispatch')
+class VerifyOtpView(View):
+    template='otp.html'
+    form = OtpForm
+
+    def get(self, request):
+        qr_code_text = pyotp.totp.TOTP('JBSWY3DPEHPK3PXP').provisioning_uri(request.user.username, issuer_name="Secure App")
+        form = self.form()
+        return render(request, self.template, locals())
+
+    def post(self, request):
+        form = self.form(request.POST)
+        if form.is_valid():
+            return redirect(reverse('accounts:dashboard'))
+        return render(request, self.template, locals())
+
+
 
 @method_decorator(login_required, name='dispatch')
 class CreateAdminView(View):
@@ -191,14 +209,14 @@ def login_submit(request):
                 login(request, user)
                 if 'next' in request.GET:
                     return redirect(request.GET.get('next', '/'))
-                return redirect(reverse('accounts:dashboard'))
+                return redirect(reverse('accounts:verify-otp'))
             elif email_user and getattr(email_user, 'is_active', False):
                 user = authenticate(username=email_user.username, password=password)
                 if user:
                     login(request, user)
                     if 'next' in request.GET:
                         return redirect(request.GET.get('next', '/'))
-                    return redirect(reverse('accounts:dashboard'))
+                    return redirect(reverse('accounts:verify-otp'))
             return render(request, "login.html", {"form": form, 'errors': "You have entered wrong username/email or password"})
         return render(request, "login.html", {"form": form, 'errors': form.errors})
     return redirect(reverse("accounts:login"))

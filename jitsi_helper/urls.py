@@ -16,9 +16,11 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
+from qr_code import urls as qr_code_urls
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
+    url(r'^qr_code/', include(qr_code_urls, namespace="qr_code")),
     url(r'^', include('accounts.urls')),
     url(r'^', include('room.urls')),
     url(r'^', include('restrictions.urls')),
