@@ -9,10 +9,14 @@ from django.utils.translation import ugettext_lazy as _
 
 class RoomPasswordForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    guest_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     def __init__(self, room, *args, **kwargs):
         super(RoomPasswordForm, self).__init__(*args, **kwargs)
         self.room = room
+        if not self.room.password:
+            self.fields['password'].required = False
+            self.fields['password'].widget = forms.HiddenInput()
 
     def clean(self):
         super().clean()

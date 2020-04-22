@@ -170,21 +170,18 @@ class GuestJoinView(View):
 
     def get(self, request, *args, **kwargs):
         room_obj = get_object_or_404(Room, room_id=kwargs.get('uid'))
-        if room_obj.password:
-            form = self.password_form(room=room_obj)
-            return render(request, self.password_template, locals())
-        return self.join_room(request, room_obj=room_obj)
+        form = self.password_form(room=room_obj)
+        return render(request, self.password_template, locals())
 
     def post(self, request, *args, **kwargs):
         room_obj = get_object_or_404(Room, room_id=kwargs.get('uid'))
-        if room_obj.password:
-            form = self.password_form(room=room_obj, data=request.POST)
-            if form.is_valid():
-                return self.join_room(request, room_obj)
-            return render(request, self.password_template, locals())
-        return self.join_room(request, room_obj)
+        form = self.password_form(room=room_obj, data=request.POST)
+        if form.is_valid():
+            guest_name = form.cleaned_data.get('guest_name')
+            return self.join_room(request, room_obj, guest_name)
+        return render(request, self.password_template, locals())
 
-    def join_room(self, request, room_obj):
+    def join_room(self, request, room_obj, guest_name):
         is_active = True
         has_access = False
         if not room_obj.is_active:
@@ -199,7 +196,7 @@ class GuestJoinView(View):
                 "context": {
                     "user": {
                         "avatar": "https:/gravatar.com/avatar/abc123",
-                        "name": str(user_uid),
+                        "name": guest_name,
                         "email": '',
                         "id": str(user_uid),
                         "p_id": "0",
