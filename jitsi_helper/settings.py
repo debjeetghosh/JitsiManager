@@ -92,7 +92,12 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = 'accounts.JitsiUser'
-
+SENDGRID_API_KEY='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'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
