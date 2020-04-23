@@ -28,7 +28,7 @@ class OtpForm(forms.Form):
         otp = self.data.get('otp')
         if not pyotp.TOTP(self.key).verify(otp):
             self.add_error('otp',
-                           'please give an otp')
+                           'please give a valid otp')
 
 
 class UserForm(forms.ModelForm):
