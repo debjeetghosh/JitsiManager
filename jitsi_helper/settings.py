@@ -92,10 +92,10 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = 'accounts.JitsiUser'
-SENDGRID_API_KEY='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'
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_HOST_USER = 'postmaster@gomeeting.org'
+EMAIL_HOST_PASSWORD = '123456'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
