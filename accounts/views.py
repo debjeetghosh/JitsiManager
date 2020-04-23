@@ -1,4 +1,5 @@
 import uuid
+from random import randint
 
 import pyotp
 from django import views
@@ -6,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
+from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -16,7 +18,7 @@ from django.views.generic import ListView
 
 from accounts.auth_helper import is_user_admin
 from accounts.forms import LoginForm, UserForm, UserProfileForm, UpdateAdminForm, OtpForm
-from accounts.models import UserProfile, JitsiUser
+from accounts.models import UserProfile, JitsiUser, VerificationCode
 from restrictions.forms import RestrictionFormWithoutUserForm
 from restrictions.models import Restrictions
 from utils.helpers import get_obj, split_name
@@ -25,6 +27,49 @@ from utils.helpers import get_obj, split_name
 def login_view(request):
     form = LoginForm()
     return render(request, "login.html", {"form": form})
+
+class EmailVerificationMixin(object):
+    from_email = 'info@gomeeting.org'
+    subject = 'Action required'
+    default_host = 'talk.gomeeting.org'
+
+    @staticmethod
+    def create_code(user):
+        try:
+            # verification_code = str(uuid.uuid4())
+            verification_code = str(randint(100000, 999999))
+            VerificationCode.objects.create(
+                user=user,
+                email=user.email,
+                code=verification_code
+            )
+            return verification_code
+        except Exception as e:
+            return None
+
+    def send_mail(self, content, mail_to):
+        try:
+            msg = EmailMultiAlternatives(self.subject, content, self.from_email, [mail_to])
+            msg.attach_alternative(content, "text/html")
+            msg.send()
+            return True
+        except Exception as e:
+            return False
+
+    def verify_code(self, user, code):
+        return VerificationCode.objects.filter(
+            user=user,
+            code=code,
+            email=user.email
+        ).exists()
+
+    def send_verification_email(self, user, verification_host=None):
+        verification_code = self.create_code(user)
+        html_content = 'Use this code to verify your email: %s <br> ' % verification_code
+        html_content += '<br><p>This code is valid for 48 hours</p><br><br>'
+        html_content += 'Thanks for staying with talk.gomeeting.org'
+        self.send_mail(html_content, user.email)
+        return True
 
 
 class RegisterView(View):
@@ -109,25 +154,24 @@ class DeleteUserView(View):
             return redirect(reverse("accounts:dashboard"))
 
 @method_decorator(login_required, name='dispatch')
-class VerifyOtpView(View):
+class VerifyOtpView(View, EmailVerificationMixin):
     template='otp.html'
     form = OtpForm
 
     def get(self, request):
-        if not request.user.profile.totp_key:
-            profile = request.user.profile
-            profile.totp_key = pyotp.random_base32()
-            profile.save()
-        qr_code_text = pyotp.totp.TOTP(request.user.profile.totp_key).provisioning_uri(request.user.username, issuer_name="Secure App")
-        form = self.form(key=request.user.profile.totp_key)
+        self.send_verification_email(request.user)
+        form = self.form()
         return render(request, self.template, locals())
 
     def post(self, request):
-        form = self.form(data=request.POST, key=request.user.profile.totp_key)
+        form = self.form(data=request.POST)
         if form.is_valid():
-            return redirect(reverse('accounts:dashboard'))
-        qr_code_text = pyotp.totp.TOTP(request.user.profile.totp_key).provisioning_uri(request.user.username,
-                                                                                       issuer_name="Secure App")
+            code = form.cleaned_data.get('otp')
+            if self.verify_code(request.user, code):
+                request.session['email_verified'] = True
+
+                return redirect(reverse('accounts:dashboard'))
+            form.add_error("otp", "Your otp is worng")
         return render(request, self.template, locals())
 
 

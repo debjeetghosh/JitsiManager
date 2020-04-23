@@ -39,3 +39,15 @@ class UserProfile(models.Model):
     name = models.CharField(max_length=255)
     user_type = models.CharField(choices=USER_TYPE_CHOICES, max_length=255)
     totp_key = models.CharField(max_length=20, null=True)
+
+class VerificationCode(models.Model):
+    user = models.ForeignKey(JitsiUser, on_delete=models.CASCADE)
+    email = models.EmailField()
+    code = models.CharField(max_length=50)
+    is_verified = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    verified_at = models.DateTimeField(auto_now=True)
+
+
+    def __str__(self):
+        return self.email

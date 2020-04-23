@@ -11,11 +11,9 @@
             <div class="alert alert-danger margin-center" style="width: 400px;">{{ form.errors }}</div>
         {% endif %}
         <div class="card shadow panel p30 margin-center" style="width: 400px;">
-            <div class="text-center">
-                <img src="{% qr_url_from_text qr_code_text size="m" image_format="png" error_correction="L" %}" alt=""/>
-            </div>
+
             <div>
-                Scan qr code and please give otp
+                Check your email and please give otp
             </div>
             <form action="." method="post">
                 {% csrf_token %}
