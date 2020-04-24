@@ -29,7 +29,7 @@ def login_view(request):
     return render(request, "login.html", {"form": form})
 
 class EmailVerificationMixin(object):
-    from_email = 'postmaster@gomeeting.org'
+    from_email = 'voipxmeet@voipxint.com'
     subject = 'Action required'
     default_host = 'talk.gomeeting.org'
 
