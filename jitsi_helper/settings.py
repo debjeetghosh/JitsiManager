@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'jitsi_helper.middleware.OTPAuthMiddleware'
+    'jitsi_helper.middleware.OTPAuthMiddleware'
 ]
 
 ROOT_URLCONF = 'jitsi_helper.urls'
@@ -93,11 +93,12 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'accounts.JitsiUser'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'localhost'
-EMAIL_HOST_USER = 'postmaster@gomeeting.org'
-EMAIL_HOST_PASSWORD = '123456'
+EMAIL_HOST = 'smtp.office365.com'
+EMAIL_HOST_USER = 'voipxmeet@voipxint.com'
+EMAIL_HOST_PASSWORD = 'Haf10150'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
