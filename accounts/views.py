@@ -259,12 +259,16 @@ def login_submit(request):
                 login(request, user)
                 if 'next' in request.GET:
                     return redirect(request.GET.get('next', '/'))
-                # return redirect(reverse('accounts:dashboard'))
+                if user.profile.user_type == UserProfile.CREATOR:
+                    return redirect(reverse('accounts:dashboard'))
                 return redirect(reverse('accounts:verify-otp'))
             elif email_user and getattr(email_user, 'is_active', False):
                 user = authenticate(username=email_user.username, password=password)
                 if user:
                     login(request, user)
+
+                    if user.profile.user_type == UserProfile.CREATOR:
+                        return redirect(reverse('accounts:dashboard'))
                     if 'next' in request.GET:
                         return redirect(request.GET.get('next', '/'))
                     # return redirect(reverse('accounts:dashboard'))
