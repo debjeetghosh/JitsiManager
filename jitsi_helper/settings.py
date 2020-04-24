@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'jitsi_helper.middleware.OTPAuthMiddleware'
+    # 'jitsi_helper.middleware.OTPAuthMiddleware'
 ]
 
 ROOT_URLCONF = 'jitsi_helper.urls'
