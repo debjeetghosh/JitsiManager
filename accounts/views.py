@@ -45,6 +45,7 @@ class EmailVerificationMixin(object):
             )
             return verification_code
         except Exception as e:
+            print(e)
             return None
 
     def send_mail(self, content, mail_to):
