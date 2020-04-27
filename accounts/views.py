@@ -159,17 +159,17 @@ class UpdateUserPassword(View):
     def get(self, request, *args, **kwargs):
         if request.user.is_staff and request.user.profile.user_type == UserProfile.ADMIN and request.user.is_superuser:
             user_id = kwargs.get('pk')
-            user = JitsiUser.objects.get(id=user_id)
+            update_user = JitsiUser.objects.get(id=user_id)
             form = self.form()
             return render(request, 'update_user_password.html', locals() )
     def post(self, request, *args, **kwargs):
         if request.user.is_staff and request.user.profile.user_type == UserProfile.ADMIN and request.user.is_superuser:
             form = self.form(request.POST)
             user_id = kwargs.get('pk')
-            user = JitsiUser.objects.get(id=user_id)
+            update_user = JitsiUser.objects.get(id=user_id)
             if form.is_valid():
-                user.set_password(form.cleaned_data['password'])
-                user.save()
+                update_user.set_password(form.cleaned_data['password'])
+                update_user.save()
                 return redirect(reverse('accounts:dashboard'))
             return render(request, 'update_user_password.html', locals())
 
