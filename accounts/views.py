@@ -17,7 +17,7 @@ from django.views import View
 from django.views.generic import ListView
 
 from accounts.auth_helper import is_user_admin
-from accounts.forms import LoginForm, UserForm, UserProfileForm, UpdateAdminForm, OtpForm
+from accounts.forms import LoginForm, UserForm, UserProfileForm, UpdateAdminForm, OtpForm, UserPasswordForm
 from accounts.models import UserProfile, JitsiUser, VerificationCode
 from restrictions.forms import RestrictionFormWithoutUserForm
 from restrictions.models import Restrictions
@@ -153,6 +153,25 @@ class DeleteUserView(View):
             user_id = kwargs.get('pk')
             JitsiUser.objects.get(id=user_id).delete()
             return redirect(reverse("accounts:dashboard"))
+
+class UpdateUserPassword(View):
+    form = UserPasswordForm
+    def get(self, request, *args, **kwargs):
+        if request.user.is_staff and request.user.profile.user_type == UserProfile.ADMIN and request.user.is_superuser:
+            user_id = kwargs.get('pk')
+            user = JitsiUser.objects.get(id=user_id)
+            form = self.form()
+            return render(request, 'update_user_password.html', locals() )
+    def post(self, request, *args, **kwargs):
+        if request.user.is_staff and request.user.profile.user_type == UserProfile.ADMIN and request.user.is_superuser:
+            form = self.form(request.POST)
+            user_id = kwargs.get('pk')
+            user = JitsiUser.objects.get(id=user_id)
+            if form.is_valid():
+                user.set_password(form.cleaned_data['password'])
+                user.save()
+                return redirect(reverse('accounts:dashboard'))
+            return render(request, 'update_user_password.html', locals())
 
 @method_decorator(login_required, name='dispatch')
 class VerifyOtpView(View, EmailVerificationMixin):

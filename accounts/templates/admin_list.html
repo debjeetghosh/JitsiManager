@@ -54,6 +54,11 @@
 
                 <td>
                     <a href="{% url 'accounts:admin_update' admin.user.id %}" class="btn btn-primary">Update</a>
+                    {% if user.is_staff and user.is_superuser %}
+                        <a href="{% url 'accounts:update_user_password' admin.user.id %}" class="btn btn-primary">Update Password</a>
+                        <a href="{% url 'accounts:delete_creator' admin.user.id %}" class="btn btn-danger">Delete user</a>
+                    {% endif %}
+
                 </td>
             </tr>
         {% endfor %}

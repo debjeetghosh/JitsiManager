@@ -15,8 +15,22 @@ class UpdateAdminForm(forms.ModelForm):
         model = JitsiUser
         fields = ['is_active', 'is_staff', 'is_superuser']
 
+
 class OtpForm(forms.Form):
     otp = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+
+class UserPasswordForm(forms.Form):
+    password = forms.CharField(max_length=200, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    confirm_password = forms.CharField(max_length=200, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+    def clean(self):
+        super().clean()
+        clean_data = self.cleaned_data
+        password = self.cleaned_data.get('password')
+        confirm_password = self.cleaned_data.get('confirm_password')
+        if password != confirm_password:
+            self.add_error('password', forms.ValidationError("Password and confirm password should match"))
 
 
 class UserForm(forms.ModelForm):

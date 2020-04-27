@@ -12,6 +12,7 @@ urlpatterns = [
     path('create/admin/', CreateAdminView.as_view(), name="create_admin"),
     path('admins/', AdminListView.as_view(), name="admin_list"),
     path('creator/<int:pk>/delete/', DeleteUserView.as_view(), name="delete_creator"),
+    path('user/<int:pk>/update/', UpdateUserPassword.as_view(), name="update_user_password"),
     path('admins/<int:pk>/update/', AdminUpdateView.as_view(), name="admin_update"),
     path('', dashboard, name='dashboard'),
 ]

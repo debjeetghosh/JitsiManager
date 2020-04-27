@@ -40,6 +40,9 @@
 
                 <td>
                     <a href="{% url 'restrictions:restriction_update' restriction.id %}" class="btn btn-primary">Update</a>
+                    {% if user.is_staff and user.is_superuser %}
+                    <a href="{% url 'accounts:update_user_password' restriction.user.id %}" class="btn btn-primary">Update Password</a>
+                    {% endif %}
                     <a href="{% url 'accounts:delete_creator' restriction.user.id %}" class="btn btn-danger">Delete user</a>
                 </td>
             </tr>
