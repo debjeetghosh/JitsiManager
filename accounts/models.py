@@ -46,7 +46,7 @@ class VerificationCode(models.Model):
     code = models.CharField(max_length=50)
     is_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    verified_at = models.DateTimeField(auto_now=True)
+    verified_at = models.DateTimeField(null=True)
 
 
     def __str__(self):
