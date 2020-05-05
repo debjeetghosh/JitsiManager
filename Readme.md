@@ -62,3 +62,26 @@ cp prosody_modules/token/util.lib.lua /usr/share/jitsi-meet/prosody-plugins/toke
     
     
 * Make sure the `bosh` module is enabled in prosody.cfg.lua and database username, password and database name are same as this project
+
+* Make sure this line is appended in prosody.cfg.lua
+```
+Include "conf.d/*.cfg.lua"
+```
+
+* then 
+```
+wget https://raw.githubusercontent.com/bjc/prosody/master/plugins/mod_posix.lua
+mv mod_posix.lua /usr/lib/prosody/modules
+```
+
+* install luarocks and lua plugins
+```
+apt install luarocks
+luarocks install luadbi
+sudo apt-get install libpq-dev
+luarocks install luadbi-postgresql POSTGRES_INCDIR=/usr/include/postgresql
+apt-get install libssl1.0-dev
+luarocks install basexx
+luarocks install luajwtjitsi
+```
+
