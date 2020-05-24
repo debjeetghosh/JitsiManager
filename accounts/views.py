@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -304,3 +305,12 @@ def logout_view(request):
 @login_required
 def dashboard(request):
     return render(request, 'dashboard.html', {})
+
+def directorySearch(request):
+    result = [
+        {
+            "id": "102@officepbx.wcgsonline.com",
+            "name": "siptest",
+            "type": "videosipgw"
+        }]
+    return JsonResponse(data=result, safe=False)

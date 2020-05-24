@@ -15,4 +15,6 @@ urlpatterns = [
     path('user/<int:pk>/update/', UpdateUserPassword.as_view(), name="update_user_password"),
     path('admins/<int:pk>/update/', AdminUpdateView.as_view(), name="admin_update"),
     path('', dashboard, name='dashboard'),
+    path('directorySearch/', directorySearch, name='directorySearch'),
+
 ]
