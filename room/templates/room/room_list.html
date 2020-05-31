@@ -61,7 +61,7 @@
     </table>
     </div>
     <div class="col-md-4">
-        <button id="authorize_button" class="btn btn-primary" style="display: none;">Add Google Calender</button> <button id="add_event_button" class="btn btn-primary" style="display: none;">Add Event</button> <button id="signout_button" class="btn btn-primary" style="display: none;">Remove Google Calender</button>
+        <button id="authorize_button" class="btn btn-primary" style="display: none;">Add Google Calender</button> <button id="signout_button" class="btn btn-primary" style="display: none;">Remove Google Calender</button>
         <div>
             <h5>Google calender events</h5>
             <div  id="content">
@@ -75,7 +75,6 @@
     <script>
         var SCOPES = "https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar";
         var authorizeButton = document.getElementById('authorize_button');
-        var addEventButton = document.getElementById('add_event_button');
         var signoutButton = document.getElementById('signout_button');
         var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
 
@@ -96,7 +95,6 @@
                 // Handle the initial sign-in state.
                 updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
                 authorizeButton.onclick = handleAuthClick;
-                addEventButton.onclick = addEvent;
                 signoutButton.onclick = handleSignoutClick;
             }, function (error) {
                 {#appendPre(JSON.stringify(error, null, 2));#}
@@ -106,12 +104,10 @@
         function updateSigninStatus(isSignedIn) {
             if (isSignedIn) {
                 authorizeButton.style.display = 'none';
-                addEventButton.style.display = 'inline';
                 signoutButton.style.display = 'inline';
                 listUpcomingEvents();
             } else {
                 authorizeButton.style.display = 'inline';
-                addEventButton.style.display = 'none';
                 signoutButton.style.display = 'none';
             }
         }
