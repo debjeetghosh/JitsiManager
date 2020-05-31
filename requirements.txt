@@ -4,3 +4,4 @@ django-compressor
 pyjwt
 pyotp
 django-qr-code
+google-api-python-client

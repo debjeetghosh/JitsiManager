@@ -9,5 +9,7 @@ urlpatterns = [
     path('room/<int:pk>/delete/', RoomDeleteView.as_view(), name='delete_room'),
     path('room/<str:uid>/join/as-guest/', GuestJoinView.as_view(), name='join_guest_room'),
     path('room/update/<int:pk>/', RoomUpdateView.as_view(), name='room_update'),
-    path('room/<int:pk>/details/json/', RoomJsonDetailsView.as_view(), name="room_json_details")
+    path('room/<int:pk>/details/json/', RoomJsonDetailsView.as_view(), name="room_json_details"),
+    path('room/sync_google/json/', RoomSyncGoogle.as_view(), name="room_google_sync"),
+    path('room/google_calender/not_synced/json/', RoomGoogleCalenderListView.as_view(), name="room_google_calender"),
 ]
