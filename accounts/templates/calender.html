@@ -2,13 +2,162 @@
 {% block contents %}
     <div class="row">
         <div class="col-md-4">
-            <button id="authorize_button" style="display: none;">Authorize</button>
-            <button id="add_event_button" style="display: none;">Add Event</button>
-            <button id="signout_button" style="display: none;">Sign Out</button>
+            <button id="authorize_button" style="display: none;" onclick="signIn()">Authorize</button>
+            <button id="add_event_button" style="display: none;" onclick="addEvent()">Add Event</button>
+            <button id="signout_button" style="display: none;" onclick="signOut()">Sign Out</button>
             <pre id="content" style="white-space: pre-wrap;"></pre>
         </div>
     </div>
 {% endblock %}
 {% block page_script %}
+    <script src="https://cdn.jsdelivr.net/npm/bluebird@3.7.2/js/browser/bluebird.min.js"></script>
+    <script src="https://alcdn.msftauth.net/lib/1.2.1/js/msal.js"
+            integrity="sha384-9TV1245fz+BaI+VvCjMYL0YDMElLBwNS84v3mY57pXNOt6xcUYch2QLImaTahcOP"
+            crossorigin="anonymous"></script>
 
+    <!-- Graph SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@microsoft/microsoft-graph-client/lib/graph-js-sdk.js"></script>
+    <script type="text/javascript">
+        const msalConfig = {
+            auth: {
+                clientId: '5b005403-dd7b-4872-be03-435a9a9d43f3',
+                redirectUri: 'http://localhost:8000/calender/'
+            },
+            cache: {
+                cacheLocation: "sessionStorage",
+                storeAuthStateInCookie: false,
+                forceRefresh: false
+            }
+        };
+
+        const loginRequest = {
+            scopes: [
+                'profile',
+                'user.read',
+                'calendars.readWrite'
+            ]
+        };
+        const authorizeButton = document.getElementById('authorize_button');
+        const addEventButton = document.getElementById('add_event_button');
+        const signOutButton = document.getElementById('signout_button');
+        const contentElement = document.getElementById('content');
+
+        function showAccountNav(account, data) {
+
+            if (account) {
+                authorizeButton.style.display = 'none';
+                signOutButton.style.display = 'inline';
+                addEventButton.style.display = 'inline';
+                contentElement.appendChild(document.createTextNode("account:" + JSON.stringify(account) + "\n"));
+            } else {
+                // Show a "sign in" button
+                authorizeButton.style.display = 'inline';
+                signOutButton.style.display = 'none';
+                addEventButton.style.display = 'none'
+            }
+            contentElement.appendChild(document.createTextNode("data:" + JSON.stringify(data) + "\n"));
+        }
+
+        function showError(error) {
+            var alert = createElement('div', 'alert alert-danger');
+
+            var message = createElement('p', 'mb-3', error.message);
+            alert.appendChild(message);
+
+            if (error.debug) {
+                var pre = createElement('pre', 'alert-pre border bg-light p-2');
+                alert.appendChild(pre);
+
+                var code = createElement('code', 'text-break text-wrap',
+                    JSON.stringify(error.debug, null, 2));
+                pre.appendChild(code);
+            }
+
+            mainContainer.innerHTML = '';
+            mainContainer.appendChild(alert);
+        }
+
+        function updatePage(account, data) {
+            showAccountNav(account, data);
+        }
+
+        async function signIn() {
+            // Login
+            try {
+                await msalClient.loginPopup(loginRequest);
+                console.log('id_token acquired at: ' + new Date().toString());
+                if (msalClient.getAccount()) {
+                    updatePage(msalClient.getAccount());
+                    getEvents();
+                }
+            } catch (error) {
+                console.log(error);
+
+            }
+        }
+
+        function signOut() {
+             msalClient.logout();
+        }
+
+        const msalClient = new Msal.UserAgentApplication(msalConfig);
+        const options =
+            new MicrosoftGraph.MSALAuthenticationProviderOptions([
+                'user.read',
+                'calendars.read'
+            ]);
+        // Create an authentication provider for the implicit flow
+        const authProvider =
+            new MicrosoftGraph.ImplicitMSALAuthenticationProvider(msalClient, options);
+        // Initialize the Graph client
+        const graphClient = MicrosoftGraph.Client.initWithMiddleware({authProvider});
+
+        async function getEvents() {
+            try {
+                let events = await graphClient
+                    .api('/me/events')
+                    .select('subject,organizer,start,end')
+                    .orderby('createdDateTime DESC')
+                    .get();
+
+                updatePage(msalClient.getAccount(), events);
+            } catch (error) {
+                updatePage(msalClient.getAccount(), {
+                    message: 'Error getting events',
+                    debug: error
+                });
+            }
+        }
+
+        if (msalClient.getAccount() && !msalClient.isCallback(window.location.hash)) {
+            updatePage(msalClient.getAccount());
+            getEvents();
+        }
+        updatePage();
+
+        async function addEvent() {
+            var time_zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const event = {
+                subject: "Let's go for lunch",
+                body: {
+                    contentType: "HTML",
+                    content: "Does mid month work for you?"
+                },
+                start: {
+                    dateTime: "2019-03-15T12:00:00",
+                    timeZone: time_zone
+                },
+                end: {
+                    dateTime: "2019-03-15T14:00:00",
+                    timeZone: time_zone
+                },
+                location: {
+                    displayName: "http://a.com"
+                },
+                attendees: []
+            };
+            let res = await graphClient.api('/me/calendar/events').post(event);
+            updatePage(msalClient.getAccount(), res);
+        }
+    </script>
 {% endblock %}

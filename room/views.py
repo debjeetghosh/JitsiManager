@@ -114,10 +114,40 @@ class RoomSyncGoogle(View):
         room.save()
         return JsonResponse(data={"success": True})
 
+
+@method_decorator(login_required, name="dispatch")
+class RoomSyncOutlook(View):
+    def get(self, request):
+        room_id = request.GET.get('room_id')
+        room = Room.objects.get(id=room_id)
+        is_synced = int(request.GET.get('is_synced', '0'))
+        is_synced = bool(is_synced)
+        room.is_outlook_synced = is_synced
+        room.save()
+        return JsonResponse(data={"success": True})
+
 @method_decorator(login_required, name="dispatch")
 class RoomGoogleCalenderListView(View):
     def get(self, request):
         rooms = Room.objects.filter(created_by=self.request.user, is_active=True, room_type=Room.PUBLIC, is_google_synced=False).filter(Q(max_length=-1) | Q(start_time__gte=int(time()*1000))).all()
+        result = []
+        for room in rooms:
+            result.append({
+                "id": room.id,
+                "room_id": room.room_id,
+
+                "name": room.name,
+                "already_started": True if room.start_time <= int(time()*1000) else False,
+                "start_time": room.start_time,
+                "max_length": room.max_length,
+                "host_join_time": room.host_join_time
+            })
+        return JsonResponse(data=result, safe=False)
+
+@method_decorator(login_required, name="dispatch")
+class RoomOutlookCalenderListView(View):
+    def get(self, request):
+        rooms = Room.objects.filter(created_by=self.request.user, is_active=True, room_type=Room.PUBLIC, is_outlook_synced=False).filter(Q(max_length=-1) | Q(start_time__gte=int(time()*1000))).all()
         result = []
         for room in rooms:
             result.append({

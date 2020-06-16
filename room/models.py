@@ -23,6 +23,7 @@ class Room(models.Model):
     max_length = models.IntegerField(_("Maximum meeting time length (in Minutes)"), default=-1)
     password = models.CharField(max_length=20, null=True)
     is_google_synced = models.BooleanField(default=False)
+    is_outlook_synced = models.BooleanField(default=False)
 
     def status(self):
         time_now = int(time())*1000

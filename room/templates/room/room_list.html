@@ -62,9 +62,16 @@
     </div>
     <div class="col-md-4">
         <button id="authorize_button" class="btn btn-primary" style="display: none;">Add Google Calender</button> <button id="signout_button" class="btn btn-primary" style="display: none;">Remove Google Calender</button>
+        <button id="authorize_ms_button" class="btn btn-primary" style="display: none;" onclick="outlookSignIn()">Add Outlook Calender</button> <button id="signout_ms_button" class="btn btn-primary" style="display: none;" onclick="outlookSignOut()">Remove Outlook Calender</button>
         <div>
             <h5>Google calender events</h5>
             <div  id="content">
+
+            </div>
+        </div>
+        <div>
+            <h5>Outlook calender events</h5>
+            <div  id="content_ms">
 
             </div>
         </div>
@@ -132,6 +139,7 @@
         }
 
         function addEvent(room) {
+            var time_zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             var event = {
                 'summary': room.name,
                 'location': 'https://talk.gomeeting.org:8000/room/'+room.room_id+'/join/as-guest/',
@@ -158,7 +166,7 @@
                 }
                 event['start'] = {
                     'dateTime': today,
-                    'timeZone': 'America/Los_Angeles'
+                    'timeZone': time_zone
                 };
 
                 end_moment = start_moment.add(1, 'days');
@@ -167,7 +175,7 @@
 
                 event['end'] = {
                     'dateTime': end_day,
-                    'timeZone': 'America/Los_Angeles'
+                    'timeZone': time_zone
                 }
 
             } else {
@@ -179,11 +187,11 @@
                 end_day = end_moment.format('YYYY-MM-DDTHH:mm:ss');
                 event['start'] = {
                     'dateTime': today,
-                    'timeZone': 'America/Los_Angeles'
+                    'timeZone': time_zone
                 };
                 event['end'] = {
                     'dateTime': end_day,
-                    'timeZone': 'America/Los_Angeles'
+                    'timeZone': time_zone
                 }
             }
 
@@ -212,7 +220,7 @@
             var res = [];
             for(var i=0;i<eventList.length;i++){
                 var event = eventList[i];
-                if(event.location.startsWith("https://talk.gomeeting.org:8000/room/")) {
+                if(event.location && event.location.startsWith("https://talk.gomeeting.org:8000/room/")) {
                     res.push(event.location.split("https://talk.gomeeting.org:8000/room/")[1].split("/join/as-guest/")[0]);
                 }
             }
@@ -245,6 +253,7 @@
                 'orderBy': 'startTime'
             }).then(function (response) {
                 var events = response.result.items;
+                console.log(events);
                 getDatabaseRooms(response.result.items);
 
                 if (events.length > 0) {
@@ -254,7 +263,7 @@
                         if (!when) {
                             when = event.start.date;
                         }
-                        if(event.location.startsWith("https://talk.gomeeting.org:8000/room/")) {
+                        if(event.location && event.location.startsWith("https://talk.gomeeting.org:8000/room/")) {
                             room_id = event.location.split("https://talk.gomeeting.org:8000/room/")[1].split("/join/as-guest/")[0];
                             appendPre(event.summary + ' (' + when + ') ')
                         }
@@ -284,5 +293,219 @@
         });
         $('[data-toggle="popover"]').popover();
     });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bluebird@3.7.2/js/browser/bluebird.min.js"></script>
+    <script src="https://alcdn.msftauth.net/lib/1.2.1/js/msal.js"
+            integrity="sha384-9TV1245fz+BaI+VvCjMYL0YDMElLBwNS84v3mY57pXNOt6xcUYch2QLImaTahcOP"
+            crossorigin="anonymous"></script>
+
+    <!-- Graph SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@microsoft/microsoft-graph-client/lib/graph-js-sdk.js"></script>
+    <script type="text/javascript">
+        const msalConfig = {
+            auth: {
+                clientId: '5b005403-dd7b-4872-be03-435a9a9d43f3',
+                redirectUri: 'http://localhost:8000/calender/'
+            },
+            cache: {
+                cacheLocation: "sessionStorage",
+                storeAuthStateInCookie: false,
+                forceRefresh: false
+            }
+        };
+        const loginRequest = {
+            scopes: [
+                'profile',
+                'user.read',
+                'calendars.readWrite'
+            ]
+        };
+        const authorizeMsButton = document.getElementById('authorize_ms_button');
+        const signOutMsButton = document.getElementById('signout_ms_button');
+        const msContentElement = document.getElementById('content_ms');
+        const msalClient = new Msal.UserAgentApplication(msalConfig);
+        const options =
+            new MicrosoftGraph.MSALAuthenticationProviderOptions([
+                'profile',
+                'user.read',
+                'calendars.readWrite'
+            ]);
+        // Create an authentication provider for the implicit flow
+        const authProvider =
+            new MicrosoftGraph.ImplicitMSALAuthenticationProvider(msalClient, options);
+        // Initialize the Graph client
+        const graphClient = MicrosoftGraph.Client.initWithMiddleware({authProvider});
+        function appendMsText(data) {
+            msContentElement.appendChild(document.createTextNode(data));
+            msContentElement.appendChild(document.createElement("br"));
+        }
+        function showAccountNav(account, data) {
+
+            if (account) {
+                authorizeMsButton.style.display = 'none';
+                signOutMsButton.style.display = 'inline';
+                appendMsText("Account signed in:"+account.name+" ("+account.userName+")");
+            } else {
+                // Show a "sign in" button
+                authorizeMsButton.style.display = 'inline';
+                signOutMsButton.style.display = 'none';
+            }
+        }
+        function updatePage(account, data) {
+            showAccountNav(account, data);
+        }
+        function markSingleRoomAsOutlookSynced(room_id, is_synced) {
+            $.ajax({
+                url: '{% url 'room:room_outlook_sync' %}?room_id='+room_id+'&is_synced='+is_synced
+            }).done(function (data) {
+                console.log(data);
+            });
+        }
+        function getRoomIdsFromOutlookEvents(eventList) {
+            var res = [];
+            for(var i=0;i<eventList.length;i++){
+                var event = eventList[i];
+                if(event.location && event.location.displayName.startsWith("https://talk.gomeeting.org:8000/room/")) {
+                    res.push(event.location.displayName.split("https://talk.gomeeting.org:8000/room/")[1].split("/join/as-guest/")[0]);
+                }
+            }
+            return res;
+        }
+        async function addOutlookEvent(room) {
+            var time_zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const event = {
+                subject: room.name,
+                body: {
+                    contentType: "HTML",
+                    content: 'Join Go meeting room: '+room.name,
+                },
+                location: {
+                    displayName: 'https://talk.gomeeting.org:8000/room/'+room.room_id+'/join/as-guest/'
+                },
+                attendees: [],
+                isOrganizer: true,
+                isOnlineMeeting: true
+            };
+            if(room.max_length==-1) {
+                var today = '', end_day = '';
+                var start_moment , end_moment;
+                if(room.already_started) {
+                    start_moment = moment();
+                    today = start_moment.format('YYYY-MM-DD');
+                    today += "T00:00:00";
+                } else {
+                    start_moment = moment(room.start_time);
+                    today=start_moment.format('YYYY-MM-DDTHH:mm:ss');
+                }
+                event['start'] = {
+                    'dateTime': today,
+                    'timeZone': time_zone
+                };
+
+                end_moment = start_moment.add(1, 'days');
+                end_day = end_moment.format('YYYY-MM-DD');
+                end_day += "T23:59";
+
+                event['end'] = {
+                    'dateTime': end_day,
+                    'timeZone': time_zone
+                }
+
+            } else {
+                var today = '', end_day = '';
+                var start_moment , end_moment;
+                start_moment = moment(room.start_time);
+                today=start_moment.format('YYYY-MM-DDTHH:mm:ss');
+                end_moment = start_moment.add(room.max_length, 'minutes');
+                end_day = end_moment.format('YYYY-MM-DDTHH:mm:ss');
+                event['start'] = {
+                    'dateTime': today,
+                    'timeZone': time_zone
+                };
+                event['end'] = {
+                    'dateTime': end_day,
+                    'timeZone': time_zone
+                }
+            }
+            let res = await graphClient.api('/me/calendar/events').post(event);
+            markSingleRoomAsOutlookSynced(room.id, 1);
+        }
+
+        async function getDatabaseOutlookRooms(event_list) {
+            var roomIdList = getRoomIdsFromOutlookEvents(event_list);
+            $.ajax({
+                url: '{% url 'room:room_outlook_calender' %}'
+            }).done(function (data) {
+                console.log(data);
+                var synced_id = [];
+                if(data.length > 0) {
+
+                    for(var i=0;i<data.length;i++){
+                        if(!roomIdList.includes(data[i].room_id)) {
+                            addOutlookEvent(data[i]);
+                        }
+                    }
+                }
+            });
+        }
+
+        async function getEvents() {
+            try {
+                let events = await graphClient
+                    .api('/me/events')
+                    .select('subject,organizer,start,end,location')
+                    .orderby('createdDateTime DESC')
+                    .get();
+                events = events.value;
+                getDatabaseOutlookRooms(events);
+                if (events.length > 0) {
+                    for (i = 0; i < events.length; i++) {
+                        var event = events[i];
+                        var when = event.start.dateTime;
+                        if (!when) {
+                            when = event.start.date;
+                        }
+                        if(event.location && event.location.displayName.startsWith("https://talk.gomeeting.org:8000/room/")) {
+                            room_id = event.location.displayName.split("https://talk.gomeeting.org:8000/room/")[1].split("/join/as-guest/")[0];
+                            appendMsText(event.subject + ' (' + when + ') ')
+                        }
+
+                    }
+                } else {
+                    appendMsText('No upcoming events found.');
+                }
+            } catch (error) {
+                updatePage(msalClient.getAccount(), {
+                    message: 'Error getting events',
+                    debug: error
+                });
+            }
+        }
+
+        async function outlookSignIn() {
+            // Login
+            try {
+                await msalClient.loginPopup(loginRequest);
+                console.log('id_token acquired at: ' + new Date().toString());
+                if (msalClient.getAccount()) {
+                    updatePage(msalClient.getAccount());
+                    getEvents();
+                }
+            } catch (error) {
+                console.log(error);
+
+            }
+        }
+
+        function outlookSignOut() {
+             msalClient.logout();
+        }
+        if (msalClient.getAccount() && !msalClient.isCallback(window.location.hash)) {
+            updatePage(msalClient.getAccount());
+            getEvents();
+        } else {
+            updatePage();
+        }
+
     </script>
 {% endblock %}

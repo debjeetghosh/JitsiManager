@@ -11,5 +11,7 @@ urlpatterns = [
     path('room/update/<int:pk>/', RoomUpdateView.as_view(), name='room_update'),
     path('room/<int:pk>/details/json/', RoomJsonDetailsView.as_view(), name="room_json_details"),
     path('room/sync_google/json/', RoomSyncGoogle.as_view(), name="room_google_sync"),
+    path('room/sync_outlook/json/', RoomSyncOutlook.as_view(), name="room_outlook_sync"),
     path('room/google_calender/not_synced/json/', RoomGoogleCalenderListView.as_view(), name="room_google_calender"),
+    path('room/outlook_calender/not_synced/json/', RoomOutlookCalenderListView.as_view(), name="room_outlook_calender"),
 ]
