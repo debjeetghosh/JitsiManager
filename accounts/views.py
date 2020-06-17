@@ -280,9 +280,10 @@ def login_submit(request):
                 login(request, user)
                 if 'next' in request.GET:
                     return redirect(request.GET.get('next', '/'))
-                if user.profile.user_type == UserProfile.CREATOR:
-                    return redirect(reverse('accounts:dashboard'))
-                return redirect(reverse('accounts:verify-otp'))
+                # if user.profile.user_type == UserProfile.CREATOR:
+                #     return redirect(reverse('accounts:dashboard'))
+                # return redirect(reverse('accounts:verify-otp'))
+                return redirect(reverse('accounts:dashboard'))
             elif email_user and getattr(email_user, 'is_active', False):
                 user = authenticate(username=email_user.username, password=password)
                 if user:

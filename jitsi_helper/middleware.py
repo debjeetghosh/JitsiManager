@@ -12,6 +12,6 @@ class OTPAuthMiddleware(object):
         response = self.get_response(request)
         if request.session.get('email_verified', False):
             return response
-        if request.user.is_authenticated and request.user.profile.user_type==UserProfile.ADMIN and request.path != '/verify-otp/':
-            return redirect(reverse('accounts:verify-otp'))
+        # if request.user.is_authenticated and request.user.profile.user_type==UserProfile.ADMIN and request.path != '/verify-otp/':
+        #     return redirect(reverse('accounts:verify-otp'))
         return response
