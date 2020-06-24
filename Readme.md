@@ -1,4 +1,16 @@
+## Install prerequisits
+* firstly install postgres
+```
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+```
+* install nginx
+```
+sudo apt update
+sudo apt install nginx
+```
 ## Install This project
+
 * firstly install `virtualenv` with the help of `pip3`
 ```
 sudo apt install python3-pip
