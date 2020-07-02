@@ -42,6 +42,7 @@ sudo ufw allow OpenSSH
 sudo ufw allow http
 sudo ufw allow https
 sudo ufw allow in 10000:20000/udp
+sudo ufw allow 8000
 sudo ufw enable
 ```
 #### Step 5: Configure Prosody and install modules
@@ -311,11 +312,36 @@ DATABASES = {
 screen -S manager
 source venv/bin/activate
 python manage.py migrate
-python manage.py runserver
+python manage.py runserver 8081
 ```
 * and press **ctrl+a+d** to detach the screen
+#### Step 7: Create a super user for first time
+* Go to django project and activate virtualenv
+```shell
+cd
+cd JitsiManager
+source venv/bin/activate
+python manage.py createsuperuser
+```
+After that you will be prompted to give `Username`, `Email` and `Password` which will be your login username and password
 
-#### Step 7: Configure nginx
+#### Step 8: install letsencrypt for ssl certificate (`https`)
+```
+sudo add-apt-repository ppa:certbot/certbot
+sudo apt install python-certbot-nginx
+sudo certbot --nginx -d talk.gomeeting.org
+```
+You will be prompted to give you an email, just give any email and give `Y` and `A` as options further
+You will be shown that 
+```
+Congratulations! Your certificate and chain have been saved at:
+   /etc/letsencrypt/live/talk.gomeeting.org/fullchain.pem
+``` 
+You should see the link `/etc/letsencrypt/live/talk.gomeeting.org/fullchain.pem` and update the nginx config with that link
+
+
+
+#### Step 9: Configure nginx
 make a new configuration for your domain (`talk.gomeeting.org`)
 ```shell
 vi /etc/nginx/sites-enabled/talk.gomeeting.org.conf
