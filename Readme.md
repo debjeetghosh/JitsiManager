@@ -1,7 +1,7 @@
 ## Install prerequisits
 #### Step 1:   install postgres and create database
 Install postgres firstly.
-```
+```shell
 sudo apt update
 sudo apt install postgresql postgresql-contrib
 ```
@@ -9,18 +9,20 @@ Create database and user
 ```
 sudo su postgres
 psql
+```
+```postgresql
 create database jitsi_manager_db;
 create user jitsi_user with password 'jitsi_password';
 grant ALL on DATABASE jitsi_manager_db to jitsi_user;
 ```
 #### Step 2:  install nginx 
-```
+```shell
 sudo apt update
 sudo apt install nginx
 ```
 
 #### Step 3: install Jitsi meet
-```
+```shell
 cd
 wget -qO - https://download.jitsi.org/jitsi-key.gpg.key | sudo apt-key add -
 sudo sh -c "echo 'deb https://download.jitsi.org stable/' > /etc/apt/sources.list.d/jitsi-stable.list"
@@ -31,11 +33,11 @@ During the installation, when you are asked to provide the hostname of the curre
 
 #### Step 4: Check firewall configuration
 please check your firewall status by
-```
+```shell
 sudo ufw status
 ```
 if it is showing `Status: inactive` it is ok for you. Else you should allow some ports for jitsi meet.
-```
+```shell
 sudo ufw allow OpenSSH
 sudo ufw allow http
 sudo ufw allow https
@@ -44,13 +46,13 @@ sudo ufw enable
 ```
 #### Step 5: Configure Prosody and install modules
 * **Step 5.1:** firsly download and prosody-trunk_1nightly and jitsi-meet-token
-```
+```shell
 wget https://packages.prosody.im/debian/pool/main/p/prosody-trunk/prosody-trunk_1nightly747-1~xenial_amd64.deb
 sudo dpkg -i prosody-trunk_1nightly747-1~xenial_amd64.deb
 sudo apt-get install jitsi-meet-tokens
 ```
 * **Step 5.2:** install luarocks and lua plugins
-```
+```shell
 apt install luarocks
 luarocks install luadbi
 sudo apt-get install libpq-dev
@@ -61,7 +63,7 @@ luarocks install luajwtjitsi
 ```
 * **Step 5.3:** change prosody configuratio
 Make sure your base prosody configuration (`/etc/prosody/prosody.cfg.lua`) is like this
-```
+```lua
 
 admins = { }
 
@@ -162,7 +164,7 @@ Include "conf.d/*.cfg.lua"
 ```
 and your site prosody configuration (`/etc/prosody/conf.d/talk.gomeeting.org.cfg.lua`)
 
-```
+```lua
 plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }
 
 -- domain mapper options, must at least have domain base set to use the mapper
@@ -270,22 +272,22 @@ Component "callcontrol.talk.gomeeting.org"
 #### Step 6: Install django project
 
 * firstly install `virtualenv` with the help of `pip3`
-```
+```shell
 sudo apt install python3-pip
 sudo pip3 install --upgrade virtualenv
 ```
 * download project from github
-```
+```shell
 git clone https://github.com/debjeetghosh/JitsiManager
 ```
 * Now make a virtualenv in the project root and activate it
-```
+```shell
 cd JitsiManager
 virtualenv venv -p python3
 source venv/bin/activate
 ```
 * Now install the requirements
-```
+```shell
 pip install -r requirements.txt
 ```
 
@@ -305,21 +307,21 @@ DATABASES = {
 ```
 
 * run the project in screen 
-```
+```shell
 screen -S manager
 source venv/bin/activate
 python manage.py migrate
 python manage.py runserver
 ```
-* and press ctrl+a+d to detach the screen
+* and press **ctrl+a+d** to detach the screen
 
 #### Step 7: Configure nginx
 make a new configuration for your domain (`talk.gomeeting.org`)
-```
+```shell
 vi /etc/nginx/sites-enabled/talk.gomeeting.org.conf
 ```
 and copy following configuration and paste in that `talk.gomeeting.org.conf`
-```
+```editorconfig
 server {
     listen 8000 ssl;
     ssl_certificate /etc/letsencrypt/live/talk.gomeeting.org/fullchain.pem;
@@ -454,19 +456,19 @@ server {
 ```
 
 #### Step 8: Copy custom prosody modules
-```
+```shell
 cp prosody_modules/mod_muc_custom_max_occupants.lua /usr/share/jitsi-meet/prosody-plugins/
 cp prosody_modules/mod_auth_token.lua /usr/share/jitsi-meet/prosody-plugins/
 cp prosody_modules/mod_moderation_custom.lua /usr/share/jitsi-meet/prosody-plugins/
 cp prosody_modules/token/util.lib.lua /usr/share/jitsi-meet/prosody-plugins/token/
 ``` 
 then 
-```
+```shell
 wget https://raw.githubusercontent.com/bjc/prosody/master/plugins/mod_posix.lua
 mv mod_posix.lua /usr/lib/prosody/modules
 ```
 Lastly restart your prosody and nginx
-```
+```shell
 sudo service prosody restart
 sudo service nginx restart
 ```
