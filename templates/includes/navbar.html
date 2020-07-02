@@ -25,9 +25,8 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li><a href="">My Profile</a></li>
-                            <li><a href="">Settings</a></li>
-                            <li><a href="">Change password</a></li>
+                            <li><a href="{% url 'accounts:own_profile_details' %}">My Profile</a></li>
+                            <li><a href="{% url 'accounts:own_password_change' %}">Change password</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
                         </ul>

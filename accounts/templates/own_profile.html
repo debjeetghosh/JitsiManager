@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block contents %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <br>
+            <h3>{{ profile.name }}</h3>
+            <p>
+                {{ profile.user_type | upper }}
+            </p>
+            <p>
+                Username: <strong>{{ profile.user.username }}</strong>
+            </p>
+            <p>
+                Email address: <strong>{{ profile.user.email }}</strong>
+            </p>
+            <p>
+                Last logged in: <strong>{{ profile.user.last_login }}</strong>
+            </p>
+        </div>
+    </div>
+{% endblock %}

@@ -18,7 +18,8 @@ from django.views import View
 from django.views.generic import ListView
 
 from accounts.auth_helper import is_user_admin
-from accounts.forms import LoginForm, UserForm, UserProfileForm, UpdateAdminForm, OtpForm, UserPasswordForm
+from accounts.forms import LoginForm, UserForm, UserProfileForm, UpdateAdminForm, OtpForm, UserPasswordForm, \
+    OwnPasswordForm
 from accounts.models import UserProfile, JitsiUser, VerificationCode
 from restrictions.forms import RestrictionFormWithoutUserForm
 from restrictions.models import Restrictions
@@ -319,3 +320,23 @@ def directorySearch(request):
             "type": "videosipgw"
         }]
     return JsonResponse(data=result, safe=False)
+
+
+@login_required
+def own_profile_details(request):
+    profile=request.user.profile
+    overview=True
+    return render(request, 'own_profile.html', locals())
+
+@login_required
+def own_password_change(request):
+    change_password=True
+    if request.method == "POST":
+        form = OwnPasswordForm(data=request.POST, user=request.user)
+        if form.is_valid():
+            request.user.set_password(form.cleaned_data.get('password'))
+            request.user.save()
+            return redirect(reverse('accounts:own_profile_details'))
+        return render(request, 'own_password_change.html', locals())
+    form = OwnPasswordForm(user=request.user)
+    return render(request, 'own_password_change.html', locals())

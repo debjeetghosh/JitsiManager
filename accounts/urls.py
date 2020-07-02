@@ -17,5 +17,7 @@ urlpatterns = [
     path('', dashboard, name='dashboard'),
     path('calender/', calender_view, name='calendar'),
     path('directorySearch/', directorySearch, name='directorySearch'),
+    path('profile/own/', own_profile_details,name='own_profile_details'),
+    path('password-change/own/', own_password_change,name='own_password_change'),
 
 ]

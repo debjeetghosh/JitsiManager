@@ -16,6 +16,28 @@ class UpdateAdminForm(forms.ModelForm):
         fields = ['is_active', 'is_staff', 'is_superuser']
 
 
+
+class OwnPasswordForm(forms.Form):
+    old_password = forms.CharField(max_length=200, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(max_length=200, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    confirm_password = forms.CharField(max_length=200, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+    def __init__(self, user, *args, **kwargs):
+        super(OwnPasswordForm, self).__init__(*args, **kwargs)
+        self.user = user
+
+
+    def clean(self):
+        super().clean()
+        clean_data = self.cleaned_data
+        old_password = self.cleaned_data.get('old_password')
+        if not old_password or not self.user.check_password(old_password):
+            self.add_error('old_password', forms.ValidationError("Old password is not correct"))
+        password = self.cleaned_data.get('password')
+        confirm_password = self.cleaned_data.get('confirm_password')
+        if password != confirm_password:
+            self.add_error('password', forms.ValidationError("Password and confirm password should match"))
+
 class OtpForm(forms.Form):
     otp = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class': 'form-control'}))
 

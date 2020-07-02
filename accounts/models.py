@@ -19,7 +19,7 @@ class MyUserManager(BaseUserManager):
         profile = UserProfile.objects.create(
             user=user,
             user_uid=uuid.uuid4(),
-            user_type=UserProfile.CREATOR,
+            user_type=UserProfile.ADMIN,
             name=username
         )
         return user
