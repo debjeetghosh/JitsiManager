@@ -42,7 +42,7 @@ sudo ufw allow https
 sudo ufw allow in 10000:20000/udp
 sudo ufw enable
 ```
-####S tep 5: Configure Prosody and install modules
+#### Step 5: Configure Prosody and install modules
 * **Step 5.1:** firsly download and prosody-trunk_1nightly and jitsi-meet-token
 ```
 wget https://packages.prosody.im/debian/pool/main/p/prosody-trunk/prosody-trunk_1nightly747-1~xenial_amd64.deb
