@@ -1,5 +1,5 @@
 ## Install prerequisits
-####Step 1:   install postgres and create database
+#### Step 1:   install postgres and create database
 Install postgres firstly.
 ```
 sudo apt update
@@ -13,13 +13,13 @@ create database jitsi_manager_db;
 create user jitsi_user with password 'jitsi_password';
 grant ALL on DATABASE jitsi_manager_db to jitsi_user;
 ```
-####Step 2:  install nginx 
+#### Step 2:  install nginx 
 ```
 sudo apt update
 sudo apt install nginx
 ```
 
-####Step 3: install Jitsi meet
+#### Step 3: install Jitsi meet
 ```
 cd
 wget -qO - https://download.jitsi.org/jitsi-key.gpg.key | sudo apt-key add -
@@ -29,7 +29,7 @@ sudo apt install -y jitsi-meet
 ```
 During the installation, when you are asked to provide the hostname of the current installation, type in the Domain `talk.gomeeting.org` you setup earlier and then press `ENTER`.
 
-####Step 4: Check firewall configuration
+#### Step 4: Check firewall configuration
 please check your firewall status by
 ```
 sudo ufw status
@@ -42,7 +42,7 @@ sudo ufw allow https
 sudo ufw allow in 10000:20000/udp
 sudo ufw enable
 ```
-####Step 5: Configure Prosody and install modules
+####S tep 5: Configure Prosody and install modules
 * **Step 5.1:** firsly download and prosody-trunk_1nightly and jitsi-meet-token
 ```
 wget https://packages.prosody.im/debian/pool/main/p/prosody-trunk/prosody-trunk_1nightly747-1~xenial_amd64.deb
