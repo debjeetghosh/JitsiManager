@@ -18,6 +18,7 @@ from django.views import View
 from django.views.generic import ListView
 
 from accounts.models import UserProfile
+from jitsi_helper.local import SITE_URL
 from jitsi_helper.settings import JITSI_AUD, JITSI_ISSUER, JITSI_PRIVATE_KEY, JITSI_URL
 from restrictions.models import Restrictions
 from room.forms import RoomForm, RoomPasswordForm
@@ -87,6 +88,11 @@ class RoomListView(ListView):
         return Room.objects.filter(
             created_by=self.request.user
         )
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(RoomListView, self).get_context_data(**kwargs)
+        context['site_url'] = SITE_URL
+        return context
 
 
 @method_decorator(login_required, name="dispatch")

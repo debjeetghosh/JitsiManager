@@ -49,7 +49,7 @@
                         <a href="{% url 'room:join_room' room.id %}" class="btn btn-primary">Join Meeting</a>
 
 
-                        <button type="button" class="btn btn-primary" data-container="body" data-toggle="popover" data-placement="top" data-content="https://meet1.voipxonline.com:8000{% url 'room:join_guest_room' room.room_id %}">
+                        <button type="button" class="btn btn-primary" data-container="body" data-toggle="popover" data-placement="top" data-content="{{ site_url }}{% url 'room:join_guest_room' room.room_id %}">
                           Sharable link
                         </button>
                         <a href="{% url 'room:delete_room' room.id %}" class="btn btn-danger">Delete Meeting</a>
@@ -142,7 +142,7 @@
             var time_zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             var event = {
                 'summary': room.name,
-                'location': 'https://meet1.voipxonline.com:8000/room/'+room.room_id+'/join/as-guest/',
+                'location': '{{ site_url }}/room/'+room.room_id+'/join/as-guest/',
                 'description': 'Join Go meeting room: '+room.name,
                 'reminders': {
                     'useDefault': false,
@@ -220,8 +220,8 @@
             var res = [];
             for(var i=0;i<eventList.length;i++){
                 var event = eventList[i];
-                if(event.location && event.location.startsWith("https://meet1.voipxonline.com:8000/room/")) {
-                    res.push(event.location.split("https://meet1.voipxonline.com:8000/room/")[1].split("/join/as-guest/")[0]);
+                if(event.location && event.location.startsWith("{{ site_url }}/room/")) {
+                    res.push(event.location.split("{{ site_url }}/room/")[1].split("/join/as-guest/")[0]);
                 }
             }
             return res;
@@ -263,8 +263,8 @@
                         if (!when) {
                             when = event.start.date;
                         }
-                        if(event.location && event.location.startsWith("https://meet1.voipxonline.com:8000/room/")) {
-                            room_id = event.location.split("https://meet1.voipxonline.com:8000/room/")[1].split("/join/as-guest/")[0];
+                        if(event.location && event.location.startsWith("{{ site_url }}/room/")) {
+                            room_id = event.location.split("{{ site_url }}/room/")[1].split("/join/as-guest/")[0];
                             appendPre(event.summary + ' (' + when + ') ')
                         }
 
@@ -305,7 +305,7 @@
         const msalConfig = {
             auth: {
                 clientId: '5b005403-dd7b-4872-be03-435a9a9d43f3',
-                redirectUri: 'https://meet1.voipxonline.com:8000/room/'
+                redirectUri: '{{ site_url }}/room/'
             },
             cache: {
                 cacheLocation: "sessionStorage",
@@ -365,8 +365,8 @@
             var res = [];
             for(var i=0;i<eventList.length;i++){
                 var event = eventList[i];
-                if(event.location && event.location.displayName.startsWith("https://meet1.voipxonline.com:8000/room/")) {
-                    res.push(event.location.displayName.split("https://meet1.voipxonline.com:8000/room/")[1].split("/join/as-guest/")[0]);
+                if(event.location && event.location.displayName.startsWith("{{ site_url }}/room/")) {
+                    res.push(event.location.displayName.split("{{ site_url }}/room/")[1].split("/join/as-guest/")[0]);
                 }
             }
             return res;
@@ -380,7 +380,7 @@
                     content: 'Join Go meeting room: '+room.name,
                 },
                 location: {
-                    displayName: 'https://meet1.voipxonline.com:8000/room/'+room.room_id+'/join/as-guest/'
+                    displayName: '{{ site_url }}/room/'+room.room_id+'/join/as-guest/'
                 },
                 attendees: [],
                 isOrganizer: true,
@@ -465,8 +465,8 @@
                         if (!when) {
                             when = event.start.date;
                         }
-                        if(event.location && event.location.displayName.startsWith("https://meet1.voipxonline.com:8000/room/")) {
-                            room_id = event.location.displayName.split("https://meet1.voipxonline.com:8000/room/")[1].split("/join/as-guest/")[0];
+                        if(event.location && event.location.displayName.startsWith("{{ site_url }}/room/")) {
+                            room_id = event.location.displayName.split("{{ site_url }}/room/")[1].split("/join/as-guest/")[0];
                             appendMsText(event.subject + ' (' + when + ') ')
                         }
 
