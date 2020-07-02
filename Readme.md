@@ -305,6 +305,8 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+SITE_URL = "https://talk.gomeeting.org:8000"
+
 ```
 
 * run the project in screen 
