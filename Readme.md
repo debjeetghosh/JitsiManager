@@ -490,11 +490,6 @@ cp prosody_modules/mod_auth_token.lua /usr/share/jitsi-meet/prosody-plugins/
 cp prosody_modules/mod_moderation_custom.lua /usr/share/jitsi-meet/prosody-plugins/
 cp prosody_modules/token/util.lib.lua /usr/share/jitsi-meet/prosody-plugins/token/
 ``` 
-then 
-```shell
-wget https://raw.githubusercontent.com/bjc/prosody/master/plugins/mod_posix.lua
-mv mod_posix.lua /usr/lib/prosody/modules
-```
 Lastly restart your prosody and nginx
 ```shell
 sudo service prosody restart
