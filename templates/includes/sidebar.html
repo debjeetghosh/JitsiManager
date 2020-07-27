@@ -11,8 +11,8 @@
         <br>
         {% if user.profile.user_type == 'admin' %}
         <li class="sidebar-title" style="margin-top: 0;">User Management</li>
-        <li><a href="{% url 'restrictions:restriction_list' %}"> <i class="fa fa-angle-double-right" aria-hidden="true"></i>Mange users</a></li>
-        <li><a href="{% url 'accounts:create_creator' %}"> <i class="fa fa-angle-double-right" aria-hidden="true"></i>Create creator</a></li>
+        <li><a href="{% url 'restrictions:restriction_list' %}"> <i class="fa fa-angle-double-right" aria-hidden="true"></i>Manage Host Users</a></li>
+        <li><a href="{% url 'accounts:create_creator' %}"> <i class="fa fa-angle-double-right" aria-hidden="true"></i>Create Host User</a></li>
         {% endif %}
 
         {% if user.is_staff %}
