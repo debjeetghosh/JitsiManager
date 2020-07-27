@@ -496,5 +496,20 @@ sudo service prosody restart
 sudo service nginx restart
 ```
 
+#### Step 9: Change logo and setting
+please copy your company logo 
+```shell
+cp <image.png> /usr/share/jitsi-meet/images/jitsilogo.png
+cp <image.png> /usr/share/jitsi-meet/images/watermark.png
+```
+Change link and name in `/usr/share/jitsi-meet/interface_config.js`
+```
+vi /usr/share/jitsi-meet/interface_config.js
+```
+Find `JITSI_WATERMARK_LINK: 'https://jitsi.org'` and change this to `JITSI_WATERMARK_LINK: '<your url>'`
+\
+Find `TOOLBAR_BUTTONS` and remove `'videobackgroundblur'` from that array 
+
+
 
 
