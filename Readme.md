@@ -306,6 +306,7 @@ DATABASES = {
     }
 }
 SITE_URL = "https://talk.gomeeting.org:8000"
+VIDEO_URL = "talk.gomeeting.org" 
 
 ```
 

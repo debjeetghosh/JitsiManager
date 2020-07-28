@@ -18,7 +18,7 @@ from django.views import View
 from django.views.generic import ListView
 
 from accounts.models import UserProfile
-from jitsi_helper.local import SITE_URL
+from jitsi_helper.local import SITE_URL, VIDEO_URL
 from jitsi_helper.settings import JITSI_AUD, JITSI_ISSUER, JITSI_PRIVATE_KEY, JITSI_URL
 from restrictions.models import Restrictions
 from room.forms import RoomForm, RoomPasswordForm
@@ -216,7 +216,7 @@ class RoomJoinView(View):
                 "room": room_obj.room_id,
                 "exp": 1685141372
             }
-            domain = 'talk.gomeeting.org'
+            domain = VIDEO_URL
             creator = room_obj.created_by.profile.user_uid
             token = jwt.encode(payload, "example_app_secret", algorithm='HS256', headers=headers).decode('utf-8')
             return render(request, self.template, locals())
@@ -284,7 +284,7 @@ class GuestJoinView(View):
                 "room": room_obj.room_id,
                 "exp": 1685141372
             }
-            domain = 'talk.gomeeting.org'
+            domain = VIDEO_URL
             creator = room_obj.created_by.profile.user_uid
             token = jwt.encode(payload, "example_app_secret", algorithm='HS256', headers=headers).decode('utf-8')
             return render(request, self.template, locals())
