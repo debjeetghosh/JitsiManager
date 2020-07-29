@@ -309,6 +309,15 @@ SITE_URL = "https://talk.gomeeting.org:8000"
 VIDEO_URL = "talk.gomeeting.org" 
 
 ```
+* find and configure email host, username and password in `jitsi_helper/settings.py` to 2fa working fine 
+```
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'voipxmeet@gmail.com'
+EMAIL_HOST_PASSWORD = '+(tE@^knME*5*_Bv'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+```
 
 * run the project in screen 
 ```shell

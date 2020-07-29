@@ -93,9 +93,9 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'accounts.JitsiUser'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.office365.com'
-EMAIL_HOST_USER = 'voipxmeet@voipxint.com'
-EMAIL_HOST_PASSWORD = 'Haf10150'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'voipxmeet@gmail.com'
+EMAIL_HOST_PASSWORD = '+(tE@^knME*5*_Bv'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False

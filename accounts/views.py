@@ -21,6 +21,8 @@ from accounts.auth_helper import is_user_admin
 from accounts.forms import LoginForm, UserForm, UserProfileForm, UpdateAdminForm, OtpForm, UserPasswordForm, \
     OwnPasswordForm
 from accounts.models import UserProfile, JitsiUser, VerificationCode
+from jitsi_helper.local import VIDEO_URL
+from jitsi_helper.settings import EMAIL_HOST_USER
 from restrictions.forms import RestrictionFormWithoutUserForm
 from restrictions.models import Restrictions
 from utils.helpers import get_obj, split_name
@@ -31,9 +33,9 @@ def login_view(request):
     return render(request, "login.html", {"form": form})
 
 class EmailVerificationMixin(object):
-    from_email = 'voipxmeet@voipxint.com'
+    from_email = EMAIL_HOST_USER
     subject = 'Action required'
-    default_host = 'talk.gomeeting.org'
+    default_host = VIDEO_URL
 
     @staticmethod
     def create_code(user):
@@ -276,15 +278,15 @@ def login_submit(request):
             password = form.cleaned_data.get('password')
 
             user = authenticate(username=username, password=password)
-            email_user = get_obj(User, email=username)
+            email_user = JitsiUser.objects.filter(email=username).first()
             if user and getattr(user, 'is_active', False):
                 login(request, user)
                 if 'next' in request.GET:
                     return redirect(request.GET.get('next', '/'))
-                # if user.profile.user_type == UserProfile.CREATOR:
-                #     return redirect(reverse('accounts:dashboard'))
-                # return redirect(reverse('accounts:verify-otp'))
-                return redirect(reverse('accounts:dashboard'))
+                if user.profile.user_type == UserProfile.CREATOR:
+                    return redirect(reverse('accounts:dashboard'))
+                return redirect(reverse('accounts:verify-otp'))
+                # return redirect(reverse('accounts:dashboard'))
             elif email_user and getattr(email_user, 'is_active', False):
                 user = authenticate(username=email_user.username, password=password)
                 if user:
