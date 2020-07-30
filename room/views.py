@@ -18,7 +18,7 @@ from django.views import View
 from django.views.generic import ListView
 
 from accounts.models import UserProfile
-from jitsi_helper.local import SITE_URL, VIDEO_URL
+from jitsi_helper.local import SITE_URL, VIDEO_URL, GOOGLE_API_KEY, MICROSOFT_CLIENT_ID, GOOGLE_CLIENT_ID
 from jitsi_helper.settings import JITSI_AUD, JITSI_ISSUER, JITSI_PRIVATE_KEY, JITSI_URL
 from restrictions.models import Restrictions
 from room.forms import RoomForm, RoomPasswordForm
@@ -91,6 +91,9 @@ class RoomListView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(RoomListView, self).get_context_data(**kwargs)
+        context['googleApiKey'] = GOOGLE_API_KEY
+        context['googleClientId'] = GOOGLE_CLIENT_ID
+        context['msClientId'] = MICROSOFT_CLIENT_ID
         context['site_url'] = SITE_URL
         return context
 

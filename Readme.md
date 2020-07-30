@@ -309,6 +309,15 @@ SITE_URL = "https://talk.gomeeting.org:8000"
 VIDEO_URL = "talk.gomeeting.org" 
 
 ```
+* Create a project in google developer console and add google calendar api in your project and generate web project under oauth and generate google api key and client id. Then put that api key and client id in `jitsi_helper/local.py`. Make sure your website (`https://talk.gomeeting.org:8000`) in `Authorized JavaScript origins ` URI and `Authorized redirect URIs` URI
+```
+GOOGLE_API_KEY = 'AIzaSyDTXgC5Ll9bhz1gpBfrhUP2HGN539w8JCI'
+GOOGLE_CLIENT_ID = '110448409460-2vm0cnh7pdo6i2o30rac7929413vl1tm.apps.googleusercontent.com'
+```
+* Register an app in azure active directory and generate your client id and replace it in `jitsi_helper/local.py`. Make sure your website link `https://talk.gomeeting.org:8000` in redirect uri in SPA
+```
+MICROSOFT_CLIENT_ID = '5b005403-dd7b-4872-be03-435a9a9d43f3'
+```  
 * find and configure email host, username and password in `jitsi_helper/settings.py` to 2fa working fine 
 ```
 EMAIL_HOST = 'smtp.gmail.com'
